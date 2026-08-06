@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-ink antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Microsoft YaHei", sans-serif;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] border-none px-6 py-2.5 text-sm font-medium transition-all duration-150;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white;
+  }
+  .btn-primary:hover {
+    @apply bg-primary-dark;
+  }
+  .btn-secondary {
+    @apply btn bg-[#f1efe8] text-soft;
+  }
+  .btn-secondary:hover {
+    @apply bg-inputline;
+  }
+  .btn-sm {
+    @apply cursor-pointer rounded-lg border px-3.5 py-1.5 text-xs transition-all duration-150;
+  }
+  .btn-select {
+    @apply btn-sm border-primary bg-primary text-white;
+  }
+  .btn-select:hover {
+    @apply bg-primary-dark;
+  }
+  .btn-select.selected {
+    @apply border-success bg-success text-white;
+  }
+  .btn-link {
+    @apply btn-sm border-primary-hover bg-transparent text-primary;
+  }
+  .btn-link:hover {
+    @apply bg-primary-light;
+  }
+  .param-tag {
+    @apply rounded-md bg-surface px-2.5 py-1 text-xs text-soft;
+  }
+  .param-tag b {
+    @apply font-medium text-ink;
+  }
+  .example-chip {
+    @apply cursor-pointer rounded-[20px] border border-transparent bg-primary-light px-3.5 py-1.5 text-xs text-primary transition-all duration-150;
+  }
+  .example-chip:hover {
+    @apply bg-primary-hover;
+  }
+  .card {
+    @apply rounded-card border border-line bg-white shadow-card;
+  }
+}

@@ -1,0 +1,27 @@
+# Render Blueprint：在 Render 控制台选择 "Blueprint" 导入本文件即可创建服务。
+# 注意：持久磁盘（disk）需要付费实例；免费实例每次部署后数据会重建，
+# 对 MVP 演示可接受（启动脚本会自动重新导入 100 个元器件）。
+services:
+  - type: web
+    name: hardware-copilot-api
+    runtime: docker
+    rootDir: .
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    envVars:
+      - key: LLM_PROVIDER
+        value: mock
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: claude-sonnet-4-20250514
+      - key: DATABASE_PATH
+        value: /var/data/components.db
+      - key: CHROMA_PATH
+        value: /var/data/chroma
+      - key: CORS_ORIGINS
+        value: https://your-app.vercel.app
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1

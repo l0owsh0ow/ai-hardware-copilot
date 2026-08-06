@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+backend/data/
+backend/.env
+
+# Node
+node_modules/
+.next/
+out/
+frontend/.env.local
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
