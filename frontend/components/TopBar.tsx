@@ -1,40 +1,74 @@
+"use client";
+
+import { Check, Cpu, FileSpreadsheet, HelpCircle, History, Layers, ListChecks, PenLine } from "lucide-react";
 import Link from "next/link";
 
-const STEPS = ["输入需求", "参数解析", "元件推荐", "BOM导出"];
+const STEP_ICONS = [PenLine, ListChecks, Layers, FileSpreadsheet];
+const STEP_LABELS = ["输入需求", "参数确认", "元件推荐", "BOM导出"];
 
 export default function TopBar({ current }: { current: number }) {
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-white px-4 py-3 sm:px-8">
-      <Link href="/" className="flex shrink-0 items-center gap-2 text-sm font-semibold text-primary sm:text-base">
-        <span className="rounded-md bg-primary px-2 py-0.5 text-[10px] text-white sm:text-xs">HW</span>
-        AI硬件选型助手
-      </Link>
-      <nav className="flex gap-1 overflow-x-auto text-[10px] sm:text-xs">
-        {STEPS.map((label, i) => {
-          const n = i + 1;
-          const state =
-            n === current
-              ? "active"
-              : n < current
-                ? "done"
-                : "todo";
-          return (
-            <span
-              key={n}
-              className={`whitespace-nowrap rounded-[20px] px-2 py-1.5 transition-all sm:px-3.5 ${
-                state === "active"
-                  ? "bg-primary text-white"
-                  : state === "done"
-                    ? "bg-success-bg text-success"
-                    : "bg-[#f1efe8] text-muted"
-              }`}
-            >
-              <span className="hidden sm:inline">{n} {label}</span>
-              <span className="sm:hidden">{n}</span>
-            </span>
-          );
-        })}
-      </nav>
+    <header className="sticky top-0 z-50 border-b border-ink-200 bg-white/80 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 shadow-sm">
+            <Cpu className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-sm font-semibold text-ink-900">硬件选型助手</span>
+          <span className="hidden text-xs text-ink-400 sm:inline">Beta</span>
+        </Link>
+
+        <div className="flex items-center gap-1">
+          {STEP_ICONS.map((Icon, i) => {
+            const n = i + 1;
+            const state = n === current ? "active" : n < current ? "done" : "todo";
+            return (
+              <div key={n} className="flex items-center">
+                {i > 0 && (
+                  <div
+                    className={`mx-1 h-0.5 w-5 rounded-full sm:w-6 ${
+                      n <= current ? "bg-success-400" : "bg-ink-200"
+                    }`}
+                  />
+                )}
+                <div className="flex items-center">
+                  <div
+                    className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-all ${
+                      state === "active"
+                        ? "bg-brand-600 text-white"
+                        : state === "done"
+                          ? "bg-success-500 text-white"
+                          : "bg-ink-200 text-ink-400"
+                    }`}
+                  >
+                    {state === "done" ? <Check className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
+                  </div>
+                  <span
+                    className={`ml-1.5 hidden text-xs font-medium md:inline ${
+                      state === "active" ? "text-brand-700" : "text-ink-400"
+                    }`}
+                  >
+                    {STEP_LABELS[i]}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <button type="button" className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100" title="历史方案">
+            <History className="h-4 w-4" />
+          </button>
+          <button type="button" className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100" title="帮助">
+            <HelpCircle className="h-4 w-4" />
+          </button>
+          <div className="mx-0.5 h-5 w-px bg-ink-200" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-xs font-medium text-white">
+            KJ
+          </div>
+        </div>
+      </div>
     </header>
   );
 }

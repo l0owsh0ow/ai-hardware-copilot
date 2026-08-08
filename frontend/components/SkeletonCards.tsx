@@ -1,21 +1,26 @@
 export default function SkeletonCards({ count = 3 }: { count?: number }) {
   return (
-    <div className="mt-6">
+    <div className="space-y-3">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="card mb-4 animate-pulse p-5">
-          <div className="mb-3 flex items-start justify-between">
-            <div className="h-4 w-40 rounded bg-line-soft" />
-            <div className="h-5 w-20 rounded-[20px] bg-line-soft" />
+        <div key={i} className="overflow-hidden rounded-xl border border-ink-200 bg-white shadow-sm">
+          <div className="p-5">
+            <div className="mb-3 flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <div className="skeleton h-5 w-36 rounded" />
+                <div className="skeleton h-5 w-20 rounded-full" />
+              </div>
+              <div className="skeleton h-6 w-16 rounded" />
+            </div>
+            <div className="mb-3 flex gap-1.5">
+              {[0, 1, 2, 3].map((j) => (
+                <div key={j} className="skeleton h-5 w-16 rounded" />
+              ))}
+            </div>
+            <div className="skeleton h-12 w-full rounded-lg" />
           </div>
-          <div className="mb-3 flex gap-2">
-            {[0, 1, 2].map((j) => (
-              <div key={j} className="h-6 w-20 rounded-md bg-line-soft" />
-            ))}
-          </div>
-          <div className="h-12 rounded-lg bg-line-soft" />
-          <div className="mt-3 flex justify-between">
-            <div className="h-5 w-24 rounded bg-line-soft" />
-            <div className="h-7 w-24 rounded-lg bg-line-soft" />
+          <div className="flex items-center justify-between border-t border-ink-100 bg-ink-50/50 px-5 py-3">
+            <div className="skeleton h-3 w-40 rounded" />
+            <div className="skeleton h-7 w-24 rounded-lg" />
           </div>
         </div>
       ))}
