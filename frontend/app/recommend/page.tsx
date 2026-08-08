@@ -10,6 +10,7 @@ import {
   Cpu,
   FileSpreadsheet,
   Layers,
+  ListPlus,
   Radio,
   ShieldCheck,
   Thermometer,
@@ -109,6 +110,21 @@ export default function RecommendPage() {
       store.setSelected([...next]);
       return next;
     });
+  }
+
+  function handleSelectAll() {
+    if (recommendations.length === 0) return;
+    const allSelected = recommendations.every((r) => selected.has(r.id));
+    if (allSelected) {
+      setSelected(new Set());
+      store.setSelected([]);
+      showToast("已清空 BOM 选择", "info");
+    } else {
+      const next = new Set(recommendations.map((r) => r.id));
+      setSelected(next);
+      store.setSelected([...next]);
+      showToast(`已将 ${recommendations.length} 个元器件全部加入 BOM`, "success");
+    }
   }
 
   async function handleGenerateBom() {
@@ -364,18 +380,30 @@ export default function RecommendPage() {
                     <ArrowLeft className="h-4 w-4" />
                     修改参数
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleGenerateBom}
-                    disabled={loading}
-                    className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-700 disabled:opacity-60"
-                  >
-                    <FileSpreadsheet className="h-4 w-4" />
-                    生成 BOM 表
-                    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-xs">
-                      {selected.size}
-                    </span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSelectAll}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50"
+                    >
+                      <ListPlus className="h-4 w-4" />
+                      {selected.size === recommendations.length && recommendations.length > 0
+                        ? "取消全选"
+                        : "全部加入 BOM"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGenerateBom}
+                      disabled={loading}
+                      className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-700 disabled:opacity-60"
+                    >
+                      <FileSpreadsheet className="h-4 w-4" />
+                      生成 BOM 表
+                      <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-xs">
+                        {selected.size}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </>
             )}

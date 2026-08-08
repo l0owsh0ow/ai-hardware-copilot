@@ -20,7 +20,7 @@ class Settings:
     def __init__(self):
         self.llm_api_key: str = os.getenv("LLM_API_KEY", "")
         self.llm_model: str = os.getenv("LLM_MODEL", "claude-sonnet-4-20250514")
-        # claude / openai / mock
+        # claude / openai / deepseek / mock
         self.llm_provider: str = os.getenv("LLM_PROVIDER", "mock").strip().lower()
         self.database_path: str = os.getenv("DATABASE_PATH", "./data/components.db")
         self.chroma_path: str = os.getenv("CHROMA_PATH", "./data/chroma")

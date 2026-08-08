@@ -64,7 +64,7 @@ class LLMService:
     def __init__(self):
         self.settings = get_settings()
         self.provider = self.settings.llm_provider
-        if self.provider not in ("claude", "openai", "mock"):
+        if self.provider not in ("claude", "openai", "deepseek", "mock"):
             self.provider = "mock"
 
     # ---------- 对外接口 ----------
@@ -104,6 +104,8 @@ class LLMService:
             raise RuntimeError("未配置 LLM_API_KEY")
         if self.provider == "claude":
             return self._chat_claude(prompt)
+        if self.provider == "deepseek":
+            return self._chat_deepseek(prompt)
         return self._chat_openai(prompt)
 
     def _chat_claude(self, prompt: str) -> str:
@@ -129,6 +131,25 @@ class LLMService:
         settings = self.settings
         resp = httpx.post(
             "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.llm_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": settings.llm_model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.2,
+            },
+            timeout=60,
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+    def _chat_deepseek(self, prompt: str) -> str:
+        """DeepSeek 使用 OpenAI 兼容接口。"""
+        settings = self.settings
+        resp = httpx.post(
+            "https://api.deepseek.com/chat/completions",
             headers={
                 "Authorization": f"Bearer {settings.llm_api_key}",
                 "Content-Type": "application/json",
