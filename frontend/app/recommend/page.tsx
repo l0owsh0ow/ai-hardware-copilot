@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import BackToTop from "@/components/BackToTop";
+import BackButton from "@/components/BackButton";
 import ParamCard from "@/components/ParamCard";
 import RecommendCard from "@/components/RecommendCard";
 import SkeletonCards from "@/components/SkeletonCards";
@@ -181,6 +182,21 @@ export default function RecommendPage() {
       <TopBar current={currentStep} />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-3xl">
+          {stage === "params" ? (
+            <BackButton label="返回首页" fallback="/" />
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setStage("params");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="mb-4 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-100"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              返回参数确认
+            </button>
+          )}
           <div className="mb-1 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success-50">
               <Check className="h-5 w-5 text-success-600" />

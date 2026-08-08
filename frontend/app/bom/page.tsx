@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import BackToTop from "@/components/BackToTop";
+import BackButton from "@/components/BackButton";
 import BOMTable from "@/components/BOMTable";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
@@ -68,6 +69,7 @@ export default function BomPage() {
       <TopBar current={4} />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-4xl">
+          <BackButton label="返回推荐结果" fallback="/recommend" />
           <div className="mb-1 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
               <FileSpreadsheet className="h-5 w-5 text-brand-600" />

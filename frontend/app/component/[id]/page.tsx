@@ -1,16 +1,16 @@
 "use client";
 
-import { ArrowLeft, FileText, Package, ShoppingCart } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { FileText, Package, ShoppingCart } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import TopBar from "@/components/TopBar";
+import BackButton from "@/components/BackButton";
 import { fetchComponent } from "@/lib/api";
 import type { ComponentDetail } from "@/lib/types";
 
 export default function ComponentDetailPage() {
   const params = useParams<{ id: string }>();
-  const router = useRouter();
   const [comp, setComp] = useState<ComponentDetail | null>(null);
   const [error, setError] = useState("");
 
@@ -44,14 +44,7 @@ export default function ComponentDetailPage() {
       <TopBar current={3} />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-3xl">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="mb-4 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-100"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            返回
-          </button>
+          <BackButton label="返回" fallback="/recommend" />
 
           <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-sm">
             <div className="p-6">
