@@ -8,7 +8,6 @@ import BackToTop from "@/components/BackToTop";
 import InputBox from "@/components/InputBox";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
-import { Badge } from "@/components/ui/badge";
 import { parseRequirement } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { store } from "@/lib/store";
@@ -44,10 +43,10 @@ export default function HomePage() {
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8 animate-slide-up text-center">
-            <Badge variant="outline" className="mb-4 gap-2 border-brand-100 bg-gradient-to-r from-brand-50 to-brand-100/60 px-3 py-1 text-xs font-medium text-brand-700">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-gradient-to-r from-brand-50 to-brand-100/60 px-3 py-1 text-xs font-medium text-brand-700">
               <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />
               AI 驱动 · 已收录 100+ 元器件
-            </Badge>
+            </div>
             <h1 className="mb-3 bg-gradient-to-r from-ink-900 via-ink-800 to-brand-800 bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
               描述你的硬件项目需求
             </h1>

@@ -3,29 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    --card: #ffffff;
-    --card-foreground: #0f172a;
-    --popover: #ffffff;
-    --popover-foreground: #0f172a;
-    --primary: #4f46e5;
-    --primary-foreground: #ffffff;
-    --secondary: #f1f5f9;
-    --secondary-foreground: #1e293b;
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
-    --accent: #eef2ff;
-    --accent-foreground: #4338ca;
-    --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
-    --border: #e2e8f0;
-    --input: #e2e8f0;
-    --ring: #6366f1;
-    --radius: 0.625rem;
-  }
-
   body {
     @apply bg-ink-50 text-ink-800 antialiased;
     font-family: "Inter", system-ui, -apple-system, sans-serif;
