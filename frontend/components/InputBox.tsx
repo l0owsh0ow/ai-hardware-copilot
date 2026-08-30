@@ -1,7 +1,18 @@
 "use client";
 
-import { Car, ChevronDown, Eraser, Home, MessageSquareText, ShieldCheck, SlidersHorizontal, Sparkles, Thermometer, Watch, ArrowRight } from "lucide-react";
+import { ArrowRight, Car, Eraser, Home, MessageSquareText, ShieldCheck, SlidersHorizontal, Sparkles, Thermometer, Watch } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 
 const EXAMPLES: { text: string; short: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { short: "低功耗蓝牙温湿度传感器", text: "我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内", Icon: Thermometer },
@@ -59,7 +70,7 @@ export default function InputBox({
     if (req && !loading) onSubmit(req);
   }
 
-  const selects = [
+  const selects: { label: string; value: string; set: (v: string) => void; options: string[] }[] = [
     { label: "供电方式", value: power, set: setPower, options: ["自动推断", "电池供电", "USB 5V", "12V 适配器", "太阳能"] },
     { label: "预算范围", value: budget, set: setBudget, options: ["不限", "20 元以内", "50 元以内", "100 元以内", "200 元以内"] },
     { label: "通信方式", value: comm, set: setComm, options: ["自动推断", "蓝牙", "WiFi", "LoRa", "有线串口", "不需要"] },
@@ -68,7 +79,7 @@ export default function InputBox({
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl rounded-2xl border border-ink-200 bg-white p-8 shadow-md">
+      <div className="mx-auto max-w-3xl rounded-2xl border bg-card p-8 shadow-md">
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50">
             <svg className="h-7 w-7 animate-spin text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -92,18 +103,18 @@ export default function InputBox({
 
         <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="rounded-xl border border-ink-200 bg-white p-4">
-              <div className="skeleton mb-2 h-3 w-16 rounded" />
-              <div className="skeleton h-5 w-24 rounded" />
+            <div key={i} className="rounded-xl border bg-card p-4">
+              <Skeleton className="mb-2 h-3 w-16" />
+              <Skeleton className="h-5 w-24" />
             </div>
           ))}
         </div>
-        <div className="rounded-xl border border-ink-200 bg-white p-6">
-          <div className="skeleton mb-4 h-4 w-40 rounded" />
+        <div className="rounded-xl border bg-card p-6">
+          <Skeleton className="mb-4 h-4 w-40" />
           <div className="space-y-3">
-            <div className="skeleton h-3 w-full rounded" />
-            <div className="skeleton h-3 w-3/4 rounded" />
-            <div className="skeleton h-3 w-5/6 rounded" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-3/4" />
+            <Skeleton className="h-3 w-5/6" />
           </div>
         </div>
       </div>
@@ -111,16 +122,16 @@ export default function InputBox({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-md">
+    <div className="overflow-hidden rounded-2xl border bg-card shadow-md">
       <div className="p-6">
         <label className="mb-3 flex items-center gap-2 text-sm font-medium text-ink-700">
           <MessageSquareText className="h-4 w-4 text-brand-500" />
           项目需求描述
         </label>
-        <textarea
+        <Textarea
           rows={4}
           maxLength={500}
-          className="scrollbar-thin w-full resize-none rounded-xl border border-ink-200 px-4 py-3 text-sm text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+          className="scrollbar-thin min-h-[120px] resize-none text-sm leading-relaxed"
           placeholder="例如：我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -145,15 +156,17 @@ export default function InputBox({
           </div>
           <div className="flex flex-wrap gap-2">
             {EXAMPLES.map((ex) => (
-              <button
+              <Button
                 key={ex.short}
                 type="button"
+                variant="outline"
+                size="sm"
+                className="border-brand-100 bg-brand-50 text-brand-700 hover:bg-brand-100"
                 onClick={() => setText(ex.text)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 transition-all hover:bg-brand-100"
               >
                 <ex.Icon className="h-3 w-3" />
                 {ex.short}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -171,46 +184,37 @@ export default function InputBox({
           {selects.map((s) => (
             <div key={s.label}>
               <label className="mb-1.5 block text-xs text-ink-500">{s.label}</label>
-              <div className="relative">
-                <select
-                  className="w-full cursor-pointer appearance-none rounded-lg border border-ink-200 bg-white py-2 pl-3 pr-8 text-sm text-ink-700 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
-                  value={s.value}
-                  onChange={(e) => s.set(e.target.value)}
-                >
+              <Select value={s.value} onValueChange={s.set}>
+                <SelectTrigger className="h-9 text-sm">
+                  <SelectValue placeholder={s.value} />
+                </SelectTrigger>
+                <SelectContent>
                   {s.options.map((o) => (
-                    <option key={o}>{o}</option>
+                    <SelectItem key={o} value={o}>
+                      {o}
+                    </SelectItem>
                   ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400" />
-              </div>
+                </SelectContent>
+              </Select>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-ink-100 bg-white p-4">
+      <div className="flex items-center justify-between border-t bg-card p-4">
         <div className="flex items-center gap-1.5 text-xs text-ink-400">
           <ShieldCheck className="h-3.5 w-3.5 text-success-500" />
           数据来源：立创商城 · 嘉立创 · Datasheet
         </div>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setText("")}
-            className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-100"
-          >
-            <Eraser className="h-4 w-4" />
+          <Button type="button" variant="ghost" onClick={() => setText("")}>
+            <Eraser className="mr-1.5 h-4 w-4" />
             清空
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            disabled={!text.trim()}
-            className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          </Button>
+          <Button type="button" onClick={submit} disabled={!text.trim()}>
             开始选型
-            <ArrowRight className="h-4 w-4" />
-          </button>
+            <ArrowRight className="ml-1.5 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
