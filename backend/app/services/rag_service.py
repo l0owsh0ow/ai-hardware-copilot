@@ -201,6 +201,16 @@ def recommend(params: StructuredParams) -> list[Component]:
     if not candidates:
         return []
 
+    # 品类均衡压缩候选（每类最多 3 个、总计最多 15 个）：
+    # 控制在本地小模型的 4096 上下文内，同时保留品类覆盖
+    per_category: dict[str, list[dict]] = {}
+    for c in candidates:
+        per_category.setdefault(c["category"], []).append(c)
+    balanced: list[dict] = []
+    for cat in sorted(per_category.keys()):
+        balanced.extend(per_category[cat][:3])
+    candidates = balanced[:15]
+
     ranked = llm.rank_and_reason(
         params, candidates, top_n=settings.rag_max_recommendations
     )

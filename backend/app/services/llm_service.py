@@ -180,10 +180,25 @@ class LLMService:
         cfg = self._load_llm_settings()
         if cfg["provider"] == "mock":
             return self._mock_rank(params, candidates, top_n)
-        candidate_text = "\n".join(
-            f"- {c['part_number']} ({c['category']}) {c['description']}"
-            for c in candidates
-        )
+        # 候选信息压缩：控制 prompt 大小（小模型上下文有限）
+        candidate_lines = []
+        for c in candidates:
+            kp = c.get("key_params") or {}
+            top = {
+                k: kp[k]
+                for k in (
+                    "core", "max_frequency", "flash", "interfaces",
+                    "working_voltage", "standby_current", "range", "output",
+                    "temperature_accuracy", "bluetooth", "wireless",
+                )
+                if k in kp
+            }
+            desc = (c.get("description") or "")[:60]
+            candidate_lines.append(
+                f"- {c['part_number']} | {c.get('manufacturer','')} | {c.get('category','')}/{c.get('subcategory','')}"
+                f" | ¥{c.get('price_cny','')} | {json.dumps(top, ensure_ascii=False)[:120]} | {desc}"
+            )
+        candidate_text = "\n".join(candidate_lines)
         raw = self._chat(
             RANK_PROMPT.format(
                 top_n=top_n,
