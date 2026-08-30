@@ -29,7 +29,9 @@ def main() -> None:
     if resp.status_code != 200:
         print(f"__ERROR__ {resp.status_code} {resp.text[:200]}", file=sys.stderr)
         sys.exit(1)
-    print(resp.json()["choices"][0]["message"]["content"])
+    # 显式按 UTF-8 输出（避免 Windows 控制台 GBK 编码把中文写坏）
+    content = resp.json()["choices"][0]["message"]["content"]
+    sys.stdout.buffer.write(content.encode("utf-8"))
 
 
 if __name__ == "__main__":

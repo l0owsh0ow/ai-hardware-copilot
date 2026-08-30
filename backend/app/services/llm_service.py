@@ -134,7 +134,44 @@ class LLMService:
             PARSE_PROMPT.format(user_text=text, example=PARSE_EXAMPLE), cfg
         )
         data = self._extract_json(raw)
-        return StructuredParams(**data)
+        parsed = StructuredParams(**data)
+        # 本地小模型解析能力有限：用规则补漏修正
+        if cfg["provider"] == "local":
+            return self._rule_correct_parse(parsed, text)
+        return parsed
+
+    def _rule_correct_parse(self, parsed: StructuredParams, text: str) -> StructuredParams:
+        """本地模型解析的规则补漏：补空字段 + 修正误分类。"""
+        mock = self._mock_parse(text)
+        # 补空字段
+        if not parsed.application:
+            parsed.application = mock.application
+        if not parsed.power_supply:
+            parsed.power_supply = mock.power_supply
+        if not parsed.power_consumption:
+            parsed.power_consumption = mock.power_consumption
+        if not parsed.voltage:
+            parsed.voltage = mock.voltage
+        if not parsed.budget:
+            parsed.budget = mock.budget
+        if not parsed.duration:
+            parsed.duration = mock.duration
+        # 修正误分类：通信里的接口词挪到接口（I2C/SPI/UART/GPIO/USB 等）
+        iface_words = {"i2c", "spi", "uart", "gpio", "usb", "adc", "pwm", "can"}
+        kept_comm = []
+        moved = []
+        for c in parsed.communication:
+            if c.lower() in iface_words:
+                moved.append(c)
+            else:
+                kept_comm.append(c)
+        parsed.communication = kept_comm
+        parsed.interface = list(dict.fromkeys(parsed.interface + moved))
+        # 都空则用规则兜底
+        if not parsed.communication and not parsed.interface:
+            parsed.communication = mock.communication
+            parsed.interface = mock.interface
+        return parsed
 
     def rank_and_reason(
         self, params: StructuredParams, candidates: list[dict], top_n: int = 5
