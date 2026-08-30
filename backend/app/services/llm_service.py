@@ -299,12 +299,16 @@ class LLMService:
             "think": False,
             "keep_alive": "30m",
         }
+        # 子进程环境净化：去掉代理变量（避免 localhost 请求被代理拦截成 502）
+        clean_env = {k: v for k, v in os.environ.items() if "proxy" not in k.lower()}
+        clean_env["PYTHONIOENCODING"] = "utf-8"
         for attempt in range(3):
             proc = subprocess.run(
                 [sys.executable, helper],
                 input=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
                 capture_output=True,
                 timeout=240,
+                env=clean_env,
             )
             out = proc.stdout.decode("utf-8", errors="replace").strip()
             err = proc.stderr.decode("utf-8", errors="replace").strip()
