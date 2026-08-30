@@ -122,7 +122,7 @@ export default function InputBox({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card shadow-md">
+    <div className="overflow-hidden rounded-2xl border border-ink-100 bg-card shadow-sm">
       <div className="p-6">
         <label className="mb-3 flex items-center gap-2 text-sm font-medium text-ink-700">
           <MessageSquareText className="h-4 w-4 text-brand-500" />
