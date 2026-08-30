@@ -28,6 +28,7 @@ import SkeletonCards from "@/components/SkeletonCards";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
 import { fetchRecommendations, generateBom, saveHistory } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { showToast } from "@/lib/toast";
 import { CATEGORY_LABELS, store } from "@/lib/store";
 import type { Component, StructuredParams } from "@/lib/types";
@@ -85,8 +86,10 @@ export default function RecommendPage() {
     if (!params) return;
     setLoading(true);
     setError("");
+    track("recommend_start");
     try {
       const { recommendations: recs, degraded } = await fetchRecommendations(params);
+      track("recommend_success", { count: recs.length, degraded });
       setRecommendations(recs);
       store.setRecommendations(recs);
       store.setDegraded(degraded);
@@ -113,9 +116,11 @@ export default function RecommendPage() {
       const next = new Set(prev);
       if (next.has(c.id)) {
         next.delete(c.id);
+        track("select_component", { part_number: c.part_number, action: "remove" });
         showToast("已移出 BOM", "info");
       } else {
         next.add(c.id);
+        track("select_component", { part_number: c.part_number, action: "add" });
         showToast("已加入 BOM", "success");
       }
       store.setSelected([...next]);
@@ -132,6 +137,7 @@ export default function RecommendPage() {
       showToast("已清空 BOM 选择", "info");
     } else {
       const next = new Set(recommendations.map((r) => r.id));
+      track("select_all", { count: recommendations.length });
       setSelected(next);
       store.setSelected([...next]);
       showToast(`已将 ${recommendations.length} 个元器件全部加入 BOM`, "success");
@@ -145,6 +151,7 @@ export default function RecommendPage() {
       return;
     }
     setLoading(true);
+    track("bom_generate", { count: items.length });
     try {
       const bom = await generateBom(
         items.map((r) => ({ part_number: r.part_number, quantity: 1 })),

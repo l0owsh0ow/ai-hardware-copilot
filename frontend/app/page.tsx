@@ -9,6 +9,7 @@ import InputBox from "@/components/InputBox";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
 import { parseRequirement } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { store } from "@/lib/store";
 
 export default function HomePage() {
@@ -19,8 +20,10 @@ export default function HomePage() {
   async function handleSubmit(text: string) {
     setLoading(true);
     setError("");
+    track("parse_start");
     try {
       const { params, degraded } = await parseRequirement(text);
+      track("parse_success", { degraded });
       store.setParams(params);
       store.setDegraded(degraded);
       store.setQuery(text);
@@ -28,6 +31,7 @@ export default function HomePage() {
       store.setSelected([]);
       router.push("/recommend");
     } catch (e) {
+      track("parse_fail");
       setError(e instanceof Error ? e.message : "解析失败，请稍后重试");
       setLoading(false);
     }

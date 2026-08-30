@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi import Depends
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import bom, components, history, parse, recommend
+from .api import admin, analytics, bom, components, history, parse, recommend
 from .api import settings as settings_api
 from .config import get_settings
 from .db import init_db
@@ -50,3 +50,5 @@ app.include_router(bom.router, dependencies=[Depends(require_token)])
 app.include_router(components.router, dependencies=[Depends(require_token)])
 app.include_router(history.router, dependencies=[Depends(require_token)])
 app.include_router(settings_api.router, dependencies=[Depends(require_token)])
+app.include_router(analytics.router, dependencies=[Depends(require_token)])
+app.include_router(admin.router, dependencies=[Depends(require_token)])

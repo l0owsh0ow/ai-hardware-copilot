@@ -22,6 +22,7 @@ import BOMTable from "@/components/BOMTable";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
 import { exportBomUrl } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { showToast } from "@/lib/toast";
 import { store } from "@/lib/store";
 import type { BOMTable as BOM } from "@/lib/types";
@@ -51,6 +52,7 @@ export default function BomPage() {
 
   function handleExport(format: "excel" | "csv") {
     if (!bom) return;
+    track("bom_export", { format });
     window.open(exportBomUrl(bom.id, format, quantities), "_blank");
     showToast(`已导出为 ${format.toUpperCase()} 文件`, "success");
   }

@@ -170,3 +170,44 @@ class LLMTestResponse(BaseModel):
     latency_ms: int = 0
     model: str = ""
     error: str = ""
+
+
+# ---------- 埋点 ----------
+
+
+class AnalyticsEventRequest(BaseModel):
+    event: str
+    session_id: str = ""
+    payload: dict = Field(default_factory=dict)
+
+
+class AnalyticsSummaryResponse(BaseModel):
+    total: int
+    today: int
+    funnel: dict
+    recent: list[dict]
+
+
+# ---------- 后台管理 ----------
+
+
+class AdminComponentUpdate(BaseModel):
+    part_number: Optional[str] = None
+    category: Optional[str] = None
+    subcategory: Optional[str] = None
+    manufacturer: Optional[str] = None
+    description: Optional[str] = None
+    package: Optional[str] = None
+    price_cny: Optional[float] = None
+    price_unit: Optional[str] = None
+    stock_status: Optional[str] = None
+    datasheet_url: Optional[str] = None
+    supplier: Optional[str] = None
+    supplier_url: Optional[str] = None
+    tags: Optional[str] = None
+    key_params: Optional[dict] = None
+
+
+class AdminComponentListResponse(BaseModel):
+    total: int
+    items: list[dict]

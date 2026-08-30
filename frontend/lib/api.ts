@@ -148,3 +148,66 @@ export async function testLLMConnection(
   if (!resp.ok) throw new Error(`测试失败 (${resp.status})`);
   return (await resp.json()) as { ok: boolean; latency_ms: number; model: string; error: string };
 }
+
+export async function fetchAdminComponents(
+  q = "",
+  category = "",
+  page = 1,
+  pageSize = 20
+): Promise<{ total: number; items: Record<string, unknown>[] }> {
+  const params = new URLSearchParams({ q, category, page: String(page), page_size: String(pageSize) });
+  const resp = await fetch(`${API_BASE}/api/v1/admin/components?${params.toString()}`, {
+    headers: authHeaders(),
+  });
+  if (!resp.ok) throw new Error(`获取元器件失败 (${resp.status})`);
+  return (await resp.json()) as { total: number; items: Record<string, unknown>[] };
+}
+
+export async function addAdminComponent(comp: Record<string, unknown>) {
+  const resp = await fetch(`${API_BASE}/api/v1/admin/components`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(comp),
+  });
+  if (!resp.ok) throw new Error(`新增失败 (${resp.status})`);
+  return (await resp.json()) as { ok: boolean; id: string };
+}
+
+export async function updateAdminComponent(id: string, patch: Record<string, unknown>) {
+  const resp = await fetch(`${API_BASE}/api/v1/admin/components/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(patch),
+  });
+  if (!resp.ok) throw new Error(`更新失败 (${resp.status})`);
+  return (await resp.json()) as { ok: boolean };
+}
+
+export async function deleteAdminComponent(id: string) {
+  const resp = await fetch(`${API_BASE}/api/v1/admin/components/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  if (!resp.ok) throw new Error(`删除失败 (${resp.status})`);
+  return (await resp.json()) as { ok: boolean };
+}
+
+export async function rebuildKbIndex() {
+  const resp = await fetch(`${API_BASE}/api/v1/admin/kb/rebuild`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  if (!resp.ok) throw new Error(`重建索引失败 (${resp.status})`);
+  return (await resp.json()) as { ok: boolean; count: number; embedded: boolean; error?: string };
+}
+
+export async function fetchAnalyticsSummary() {
+  const resp = await fetch(`${API_BASE}/api/v1/analytics/summary`, { headers: authHeaders() });
+  if (!resp.ok) throw new Error(`获取数据看板失败 (${resp.status})`);
+  return (await resp.json()) as {
+    total: number;
+    today: number;
+    funnel: Record<string, number>;
+    recent: { event: string; session_id: string; created_at: string }[];
+  };
+}

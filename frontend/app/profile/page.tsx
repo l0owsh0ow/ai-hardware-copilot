@@ -15,6 +15,7 @@ import BackToTop from "@/components/BackToTop";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
 import { fetchLLMSettings, saveLLMSettings, testLLMConnection } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { showToast } from "@/lib/toast";
 import type { LLMSettings } from "@/lib/types";
 
@@ -73,6 +74,7 @@ export default function ProfilePage() {
     setError("");
     try {
       const saved = await saveLLMSettings(payload());
+      track("settings_save", { provider });
       setSettings(saved);
       setApiKey("");
       showToast("设置已保存，立即生效", "success");
@@ -87,6 +89,7 @@ export default function ProfilePage() {
     setTesting(true);
     setTestResult(null);
     setError("");
+    track("settings_test", { provider });
     try {
       setTestResult(await testLLMConnection(payload()));
     } catch (e) {

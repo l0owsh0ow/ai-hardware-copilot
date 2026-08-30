@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import TopBar from "@/components/TopBar";
 import BackButton from "@/components/BackButton";
 import { fetchComponent } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import type { ComponentDetail } from "@/lib/types";
 
 export default function ComponentDetailPage() {
@@ -16,6 +17,7 @@ export default function ComponentDetailPage() {
 
   useEffect(() => {
     if (!params?.id) return;
+    track("component_view", { id: params.id });
     fetchComponent(params.id)
       .then(setComp)
       .catch((e) => setError(e instanceof Error ? e.message : "加载失败"));

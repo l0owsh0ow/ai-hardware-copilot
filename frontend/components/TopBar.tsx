@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Cpu, FileSpreadsheet, HelpCircle, History, Layers, ListChecks, PenLine } from "lucide-react";
+import { Check, Cpu, Database, FileSpreadsheet, HelpCircle, History, Layers, ListChecks, PenLine } from "lucide-react";
 import Link from "next/link";
 
 const STEP_ICONS = [PenLine, ListChecks, Layers, FileSpreadsheet];
@@ -57,6 +57,13 @@ export default function TopBar({ current }: { current: number }) {
         </div>
 
         <div className="flex items-center gap-1.5">
+          <Link
+            href="/admin"
+            className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100"
+            title="管理后台"
+          >
+            <Database className="h-4 w-4" />
+          </Link>
           <Link
             href="/history"
             className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100"

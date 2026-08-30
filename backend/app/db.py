@@ -76,6 +76,15 @@ CREATE TABLE IF NOT EXISTS app_settings (
     value TEXT,
     updated_at TEXT
 );
+
+-- 埋点事件表
+CREATE TABLE IF NOT EXISTS analytics_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event TEXT NOT NULL,
+    session_id TEXT,
+    payload_json TEXT,
+    created_at TEXT
+);
 """
 
 
