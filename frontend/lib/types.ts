@@ -67,3 +67,10 @@ export interface HistoryDetail extends HistoryListItem {
   params: StructuredParams;
   recommendations: Component[];
 }
+
+export interface LLMSettings {
+  provider: string;
+  model: string;
+  base_url: string;
+  api_key_set: boolean;
+}

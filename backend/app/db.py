@@ -69,6 +69,13 @@ CREATE TABLE IF NOT EXISTS history_records (
     recommendations_json TEXT,  -- 推荐结果（不含长推荐理由）
     created_at TEXT
 );
+
+-- 应用设置表（如 LLM 配置：provider/model/base_url/api_key）
+CREATE TABLE IF NOT EXISTS app_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT,
+    updated_at TEXT
+);
 """
 
 

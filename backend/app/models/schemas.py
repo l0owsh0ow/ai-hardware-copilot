@@ -144,3 +144,27 @@ class HistoryDetailResponse(BaseModel):
     created_at: str
     params: StructuredParams
     recommendations: list[Component]
+
+
+# ---------- LLM 设置 ----------
+
+
+class LLMSettingsResponse(BaseModel):
+    provider: str = "mock"
+    model: str = ""
+    base_url: str = ""
+    api_key_set: bool = False
+
+
+class LLMSettingsUpdate(BaseModel):
+    provider: Optional[str] = None
+    model: Optional[str] = None
+    base_url: Optional[str] = None
+    api_key: Optional[str] = None
+
+
+class LLMTestResponse(BaseModel):
+    ok: bool
+    latency_ms: int = 0
+    model: str = ""
+    error: str = ""

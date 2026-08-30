@@ -8,10 +8,12 @@ LLM_PROVIDER:
 
 import json
 import re
+import time
 
 import httpx
 
 from ..config import get_settings
+from ..db import db_session
 from ..models.schemas import StructuredParams
 
 PARSE_PROMPT = """你是一个硬件选型助手。请从用户的自然语言描述中提取以下结构化参数：
@@ -59,20 +61,50 @@ RANK_PROMPT = """你是一个硬件选型专家。根据用户需求参数，从
 ]
 """
 
+# 各 OpenAI 兼容供应商的默认接口地址
+DEFAULT_BASE_URLS = {
+    "deepseek": "https://api.deepseek.com/chat/completions",
+    "openai": "https://api.openai.com/v1/chat/completions",
+    "local": "http://localhost:11434/v1/chat/completions",
+    "custom": "",
+}
+
 
 class LLMService:
     def __init__(self):
         self.settings = get_settings()
-        self.provider = self.settings.llm_provider
-        if self.provider not in ("claude", "openai", "deepseek", "mock"):
-            self.provider = "mock"
+        self.provider = self._load_llm_settings()["provider"]
+
+    # ---------- 配置加载（数据库设置优先，环境变量兜底） ----------
+
+    @staticmethod
+    def _load_llm_settings() -> dict:
+        """读取当前生效的 LLM 配置。"""
+        settings = get_settings()
+        db: dict[str, str] = {}
+        try:
+            with db_session() as conn:
+                rows = conn.execute("SELECT key, value FROM app_settings").fetchall()
+                db = {r["key"]: r["value"] for r in rows}
+        except Exception:
+            pass
+        provider = (db.get("llm_provider") or settings.llm_provider).strip().lower()
+        if provider not in ("claude", "openai", "deepseek", "local", "custom", "mock"):
+            provider = "mock"
+        return {
+            "provider": provider,
+            "model": db.get("llm_model") or settings.llm_model,
+            "base_url": (db.get("llm_base_url") or "").strip(),
+            "api_key": db.get("llm_api_key") or settings.llm_api_key,
+        }
 
     # ---------- 对外接口 ----------
 
     def parse_requirements(self, text: str) -> StructuredParams:
-        if self.provider == "mock":
+        cfg = self._load_llm_settings()
+        if cfg["provider"] == "mock":
             return self._mock_parse(text)
-        raw = self._chat(PARSE_PROMPT.format(user_text=text))
+        raw = self._chat(PARSE_PROMPT.format(user_text=text), cfg)
         data = self._extract_json(raw)
         return StructuredParams(**data)
 
@@ -80,7 +112,8 @@ class LLMService:
         self, params: StructuredParams, candidates: list[dict], top_n: int = 5
     ) -> list[dict]:
         """candidates 为数据库行字典（含 description/tags/key_params）。"""
-        if self.provider == "mock":
+        cfg = self._load_llm_settings()
+        if cfg["provider"] == "mock":
             return self._mock_rank(params, candidates, top_n)
         candidate_text = "\n".join(
             f"- {c['part_number']} ({c['category']}) {c['description']}"
@@ -91,34 +124,32 @@ class LLMService:
                 top_n=top_n,
                 params=params.model_dump_json(),
                 candidates=candidate_text,
-            )
+            ),
+            cfg,
         )
         data = self._extract_json(raw)
         return data if isinstance(data, list) else []
 
     # ---------- LLM 调用 ----------
 
-    def _chat(self, prompt: str) -> str:
-        settings = self.settings
-        if not settings.llm_api_key:
-            raise RuntimeError("未配置 LLM_API_KEY")
-        if self.provider == "claude":
-            return self._chat_claude(prompt)
-        if self.provider == "deepseek":
-            return self._chat_deepseek(prompt)
-        return self._chat_openai(prompt)
+    def _chat(self, prompt: str, cfg: dict) -> str:
+        provider = cfg["provider"]
+        if provider == "claude":
+            return self._chat_claude(prompt, cfg)
+        return self._chat_openai_compatible(prompt, cfg)
 
-    def _chat_claude(self, prompt: str) -> str:
-        settings = self.settings
+    def _chat_claude(self, prompt: str, cfg: dict) -> str:
+        if not cfg.get("api_key"):
+            raise RuntimeError("未配置 Claude API Key")
         resp = httpx.post(
             "https://api.anthropic.com/v1/messages",
             headers={
-                "x-api-key": settings.llm_api_key,
+                "x-api-key": cfg["api_key"],
                 "anthropic-version": "2023-06-01",
                 "content-type": "application/json",
             },
             json={
-                "model": settings.llm_model,
+                "model": cfg["model"],
                 "max_tokens": 2048,
                 "messages": [{"role": "user", "content": prompt}],
             },
@@ -127,16 +158,19 @@ class LLMService:
         resp.raise_for_status()
         return resp.json()["content"][0]["text"]
 
-    def _chat_openai(self, prompt: str) -> str:
-        settings = self.settings
+    def _chat_openai_compatible(self, prompt: str, cfg: dict) -> str:
+        """DeepSeek / OpenAI / 本地 Ollama 等统一走 OpenAI 兼容接口。"""
+        base = cfg.get("base_url") or DEFAULT_BASE_URLS.get(cfg["provider"], "")
+        if not base:
+            raise RuntimeError("未配置 Base URL")
+        headers = {"Content-Type": "application/json"}
+        if cfg.get("api_key"):
+            headers["Authorization"] = f"Bearer {cfg['api_key']}"
         resp = httpx.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {settings.llm_api_key}",
-                "Content-Type": "application/json",
-            },
+            base,
+            headers=headers,
             json={
-                "model": settings.llm_model,
+                "model": cfg["model"],
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.2,
             },
@@ -145,24 +179,28 @@ class LLMService:
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
 
-    def _chat_deepseek(self, prompt: str) -> str:
-        """DeepSeek 使用 OpenAI 兼容接口。"""
-        settings = self.settings
-        resp = httpx.post(
-            "https://api.deepseek.com/chat/completions",
-            headers={
-                "Authorization": f"Bearer {settings.llm_api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": settings.llm_model,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.2,
-            },
-            timeout=60,
-        )
-        resp.raise_for_status()
-        return resp.json()["choices"][0]["message"]["content"]
+    # ---------- 连通性测试（个人主页"测试连接"用） ----------
+
+    def test_connection(self, cfg: dict | None = None) -> dict:
+        cfg = cfg or self._load_llm_settings()
+        if cfg["provider"] == "mock":
+            return {"ok": True, "latency_ms": 0, "model": "mock", "error": ""}
+        start = time.time()
+        try:
+            self._chat("请只回复两个字：正常", cfg)
+            return {
+                "ok": True,
+                "latency_ms": int((time.time() - start) * 1000),
+                "model": cfg["model"],
+                "error": "",
+            }
+        except Exception as exc:
+            return {
+                "ok": False,
+                "latency_ms": int((time.time() - start) * 1000),
+                "model": cfg["model"],
+                "error": str(exc)[:300],
+            }
 
     @staticmethod
     def _extract_json(raw: str):

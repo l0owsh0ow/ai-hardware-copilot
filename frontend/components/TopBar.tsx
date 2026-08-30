@@ -68,9 +68,13 @@ export default function TopBar({ current }: { current: number }) {
             <HelpCircle className="h-4 w-4" />
           </button>
           <div className="mx-0.5 h-5 w-px bg-ink-200" />
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-xs font-medium text-white">
+          <Link
+            href="/profile"
+            title="个人主页"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-xs font-medium text-white transition-opacity hover:opacity-80"
+          >
             KJ
-          </div>
+          </Link>
         </div>
       </div>
     </header>

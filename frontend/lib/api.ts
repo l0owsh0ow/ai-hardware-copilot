@@ -4,6 +4,7 @@ import type {
   ComponentDetail,
   HistoryDetail,
   HistoryListItem,
+  LLMSettings,
   StructuredParams,
 } from "./types";
 
@@ -103,4 +104,32 @@ export async function deleteHistory(id: string) {
 export async function clearHistory() {
   const resp = await fetch(`${API_BASE}/api/v1/history`, { method: "DELETE" });
   if (!resp.ok) throw new Error(`清空失败 (${resp.status})`);
+}
+
+export async function fetchLLMSettings(): Promise<LLMSettings> {
+  const resp = await fetch(`${API_BASE}/api/v1/settings/llm`);
+  if (!resp.ok) throw new Error(`获取设置失败 (${resp.status})`);
+  return (await resp.json()) as LLMSettings;
+}
+
+export async function saveLLMSettings(payload: Partial<LLMSettings> & { api_key?: string }) {
+  const resp = await fetch(`${API_BASE}/api/v1/settings/llm`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!resp.ok) throw new Error(`保存失败 (${resp.status})`);
+  return (await resp.json()) as LLMSettings;
+}
+
+export async function testLLMConnection(
+  payload: Partial<LLMSettings> & { api_key?: string } = {}
+): Promise<{ ok: boolean; latency_ms: number; model: string; error: string }> {
+  const resp = await fetch(`${API_BASE}/api/v1/settings/llm/test`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!resp.ok) throw new Error(`测试失败 (${resp.status})`);
+  return (await resp.json()) as { ok: boolean; latency_ms: number; model: string; error: string };
 }

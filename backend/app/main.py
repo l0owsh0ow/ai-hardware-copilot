@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api import bom, components, history, parse, recommend
+from .api import settings as settings_api
 from .config import get_settings
 from .db import init_db
 
@@ -38,3 +39,4 @@ app.include_router(recommend.router)
 app.include_router(bom.router)
 app.include_router(components.router)
 app.include_router(history.router)
+app.include_router(settings_api.router)
