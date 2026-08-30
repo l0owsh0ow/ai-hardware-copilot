@@ -7,6 +7,7 @@ LLM_PROVIDER:
 """
 
 import json
+import logging
 import os
 import re
 import subprocess
@@ -18,6 +19,8 @@ import httpx
 from ..config import get_settings
 from ..db import db_session
 from ..models.schemas import StructuredParams
+
+logger = logging.getLogger("hwcopilot")
 
 PARSE_PROMPT = """你是一个硬件选型助手。请从用户的自然语言描述中提取以下结构化参数：
 
@@ -139,6 +142,14 @@ class LLMService:
         if cfg["provider"] == "local":
             return self._rule_correct_parse(parsed, text)
         return parsed
+
+    def parse_requirements_safe(self, text: str) -> tuple[StructuredParams, bool]:
+        """解析需求，LLM 失败时回退规则解析，返回 (params, degraded)。"""
+        try:
+            return self.parse_requirements(text), False
+        except Exception as exc:
+            logger.warning("LLM 解析失败，回退规则解析: %s", str(exc)[:200])
+            return self._mock_parse(text), True
 
     def _rule_correct_parse(self, parsed: StructuredParams, text: str) -> StructuredParams:
         """本地模型解析的规则补漏：补空字段 + 修正误分类。"""

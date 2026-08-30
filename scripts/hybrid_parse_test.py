@@ -2,7 +2,9 @@
 
 import json
 
-import httpx
+from api_client import make_client
+
+BASE = "http://127.0.0.1:8000"
 
 QUERIES = [
     "我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内",
@@ -17,7 +19,7 @@ KEYS = ["application", "power_supply", "power_consumption", "communication", "in
 
 
 def main() -> None:
-    c = httpx.Client(base_url="http://127.0.0.1:8000", timeout=300)
+    c = make_client(BASE, 300)
     for q in QUERIES:
         p = c.post("/api/v1/parse", json={"text": q}, timeout=300).json()["params"]
         filled = sum(

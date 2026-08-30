@@ -22,6 +22,7 @@ class Settings:
         self.llm_model: str = os.getenv("LLM_MODEL", "claude-sonnet-4-20250514")
         # claude / openai / deepseek / mock
         self.llm_provider: str = os.getenv("LLM_PROVIDER", "mock").strip().lower()
+        self.api_token: str = os.getenv("API_TOKEN", "").strip()
         self.database_path: str = os.getenv("DATABASE_PATH", "./data/components.db")
         self.chroma_path: str = os.getenv("CHROMA_PATH", "./data/chroma")
         self.embedding_model: str = os.getenv(

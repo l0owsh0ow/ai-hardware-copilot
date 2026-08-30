@@ -86,9 +86,10 @@ export default function RecommendPage() {
     setLoading(true);
     setError("");
     try {
-      const recs = await fetchRecommendations(params);
+      const { recommendations: recs, degraded } = await fetchRecommendations(params);
       setRecommendations(recs);
       store.setRecommendations(recs);
+      store.setDegraded(degraded);
       // 自动存档历史（纯数据库，查看时不消耗 token）
       saveHistory({
         title: params.application || store.getQuery().slice(0, 20) || "未命名方案",
@@ -217,6 +218,12 @@ export default function RecommendPage() {
           {error && (
             <div className="mb-4 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
               {error}
+            </div>
+          )}
+
+          {store.getDegraded() && (
+            <div className="mb-4 rounded-xl border border-warning-100 bg-warning-50 px-4 py-3 text-sm text-warning-700">
+              AI 服务暂不可用，当前使用规则模式（解析与推荐由规则引擎完成）
             </div>
           )}
 

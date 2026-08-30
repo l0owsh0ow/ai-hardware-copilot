@@ -6,7 +6,7 @@
 
 import sys
 
-import httpx
+from api_client import make_client
 
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8000"
 
@@ -26,7 +26,7 @@ def show(label: str, obj) -> None:
 
 
 def main() -> None:
-    client = httpx.Client(base_url=BASE, timeout=60)
+    client = make_client(BASE, 60)
 
     resp = client.post("/api/v1/parse", json={"text": SAMPLE})
     resp.raise_for_status()

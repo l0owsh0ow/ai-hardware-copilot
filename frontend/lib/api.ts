@@ -11,10 +11,20 @@ import type {
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "";
+
+function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    ...(API_TOKEN ? { "X-API-Token": API_TOKEN } : {}),
+    ...extra,
+  };
+}
+
 async function post<T>(path: string, body: unknown): Promise<T> {
   const resp = await fetch(`${API_BASE}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(body),
   });
   if (!resp.ok) {
@@ -25,15 +35,15 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 }
 
 export async function parseRequirement(text: string) {
-  const data = await post<{ params: StructuredParams }>("/api/v1/parse", { text });
-  return data.params;
+  const data = await post<{ params: StructuredParams; degraded?: boolean }>("/api/v1/parse", { text });
+  return { params: data.params, degraded: data.degraded || false };
 }
 
 export async function fetchRecommendations(params: StructuredParams) {
-  const data = await post<{ recommendations: Component[] }>("/api/v1/recommend", {
+  const data = await post<{ recommendations: Component[]; degraded?: boolean }>("/api/v1/recommend", {
     params,
   });
-  return data.recommendations;
+  return { recommendations: data.recommendations, degraded: data.degraded || false };
 }
 
 export async function generateBom(
@@ -48,7 +58,9 @@ export async function generateBom(
 }
 
 export async function fetchComponent(id: string) {
-  const resp = await fetch(`${API_BASE}/api/v1/components/${encodeURIComponent(id)}`);
+  const resp = await fetch(`${API_BASE}/api/v1/components/${encodeURIComponent(id)}`, {
+    headers: authHeaders({ "Content-Type": "text/plain" }),
+  });
   if (!resp.ok) throw new Error(`获取元器件失败 (${resp.status})`);
   const data = (await resp.json()) as { component: ComponentDetail };
   return data.component;
@@ -82,14 +94,16 @@ export async function saveHistory(payload: {
 }
 
 export async function fetchHistoryList(): Promise<HistoryListItem[]> {
-  const resp = await fetch(`${API_BASE}/api/v1/history`);
+  const resp = await fetch(`${API_BASE}/api/v1/history`, { headers: authHeaders() });
   if (!resp.ok) throw new Error(`获取历史失败 (${resp.status})`);
   const data = (await resp.json()) as { items: HistoryListItem[] };
   return data.items;
 }
 
 export async function fetchHistoryDetail(id: string): Promise<HistoryDetail> {
-  const resp = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(id)}`);
+  const resp = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(id)}`, {
+    headers: authHeaders(),
+  });
   if (!resp.ok) throw new Error(`获取历史详情失败 (${resp.status})`);
   return (await resp.json()) as HistoryDetail;
 }
@@ -97,17 +111,18 @@ export async function fetchHistoryDetail(id: string): Promise<HistoryDetail> {
 export async function deleteHistory(id: string) {
   const resp = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(id)}`, {
     method: "DELETE",
+    headers: authHeaders(),
   });
   if (!resp.ok) throw new Error(`删除失败 (${resp.status})`);
 }
 
 export async function clearHistory() {
-  const resp = await fetch(`${API_BASE}/api/v1/history`, { method: "DELETE" });
+  const resp = await fetch(`${API_BASE}/api/v1/history`, { method: "DELETE", headers: authHeaders() });
   if (!resp.ok) throw new Error(`清空失败 (${resp.status})`);
 }
 
 export async function fetchLLMSettings(): Promise<LLMSettings> {
-  const resp = await fetch(`${API_BASE}/api/v1/settings/llm`);
+  const resp = await fetch(`${API_BASE}/api/v1/settings/llm`, { headers: authHeaders() });
   if (!resp.ok) throw new Error(`获取设置失败 (${resp.status})`);
   return (await resp.json()) as LLMSettings;
 }
@@ -115,7 +130,7 @@ export async function fetchLLMSettings(): Promise<LLMSettings> {
 export async function saveLLMSettings(payload: Partial<LLMSettings> & { api_key?: string }) {
   const resp = await fetch(`${API_BASE}/api/v1/settings/llm`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(payload),
   });
   if (!resp.ok) throw new Error(`保存失败 (${resp.status})`);
@@ -127,7 +142,7 @@ export async function testLLMConnection(
 ): Promise<{ ok: boolean; latency_ms: number; model: string; error: string }> {
   const resp = await fetch(`${API_BASE}/api/v1/settings/llm/test`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders(),
     body: JSON.stringify(payload),
   });
   if (!resp.ok) throw new Error(`测试失败 (${resp.status})`);

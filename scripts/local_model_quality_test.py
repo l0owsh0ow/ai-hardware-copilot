@@ -14,7 +14,7 @@
 import sys
 import time
 
-import httpx
+from api_client import make_client
 
 BASE = "http://127.0.0.1:8000"
 
@@ -30,7 +30,7 @@ QUERIES = [
 
 def main() -> None:
     label = sys.argv[1] if len(sys.argv) > 1 else "当前配置"
-    client = httpx.Client(base_url=BASE, timeout=240)
+    client = make_client(BASE, 240)
     ok = total = 0
     latencies = []
 

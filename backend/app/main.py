@@ -1,12 +1,21 @@
 """FastAPI 入口。"""
 
+import logging
+
 from fastapi import FastAPI
+from fastapi import Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api import bom, components, history, parse, recommend
 from .api import settings as settings_api
 from .config import get_settings
 from .db import init_db
+from .security import rate_limit_middleware, require_token
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+)
 
 app = FastAPI(
     title="AI硬件选型助手 API",
@@ -22,6 +31,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.middleware("http")(rate_limit_middleware)
 
 
 @app.on_event("startup")
@@ -34,9 +44,9 @@ async def health():
     return {"status": "ok", "service": "hardware-copilot-api"}
 
 
-app.include_router(parse.router)
-app.include_router(recommend.router)
-app.include_router(bom.router)
-app.include_router(components.router)
-app.include_router(history.router)
-app.include_router(settings_api.router)
+app.include_router(parse.router, dependencies=[Depends(require_token)])
+app.include_router(recommend.router, dependencies=[Depends(require_token)])
+app.include_router(bom.router, dependencies=[Depends(require_token)])
+app.include_router(components.router, dependencies=[Depends(require_token)])
+app.include_router(history.router, dependencies=[Depends(require_token)])
+app.include_router(settings_api.router, dependencies=[Depends(require_token)])

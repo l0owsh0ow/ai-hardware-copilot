@@ -8,6 +8,7 @@ const KEYS = {
   bom: "hc_bom",
   selected: "hc_selected",
   query: "hc_query",
+  degraded: "hc_degraded",
 } as const;
 
 function read<T>(key: string): T | null {
@@ -37,6 +38,8 @@ export const store = {
   setSelected: (ids: string[]) => write(KEYS.selected, ids),
   getQuery: () => read<string>(KEYS.query) || "",
   setQuery: (q: string) => write(KEYS.query, q),
+  getDegraded: () => read<boolean>(KEYS.degraded) || false,
+  setDegraded: (d: boolean) => write(KEYS.degraded, d),
 };
 
 export const CATEGORY_LABELS: Record<string, string> = {

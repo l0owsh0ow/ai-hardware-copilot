@@ -1,6 +1,6 @@
 """多场景推荐质量测试：验证解析 + 推荐对不同需求的效果。"""
 
-import httpx
+from api_client import make_client
 
 BASE = "http://127.0.0.1:8000"
 
@@ -15,7 +15,7 @@ QUERIES = [
 
 
 def main() -> None:
-    client = httpx.Client(base_url=BASE, timeout=60)
+    client = make_client(BASE, 60)
     for q in QUERIES:
         params = client.post("/api/v1/parse", json={"text": q}).json()["params"]
         recs = client.post("/api/v1/recommend", json={"params": params}).json()[

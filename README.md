@@ -82,3 +82,13 @@ python scripts/recommend_quality_test.py  # 6 个典型场景的推荐质量检�
 | GET | `/api/v1/bom/{id}/export?format=excel\|csv` | 导出 BOM |
 | GET | `/api/v1/components/{id}` | 元器件详情 |
 | GET | `/api/v1/components/search?q=&category=` | 元器件搜索 |
+
+## 安全说明（P0 已落地）
+
+- **接口鉴权**：所有 `/api/v1/*` 需携带 `X-API-Token` 请求头（值见 `backend/.env` 的 `API_TOKEN`，前端在 `.env.local` 的 `NEXT_PUBLIC_API_TOKEN`）
+- **速率限制**：`/parse` 与 `/recommend` 每 IP 10 次/分钟，其余 API 120 次/分钟（内存版，生产建议 Redis）
+- **降级链**：LLM 调用失败自动回退规则模式，响应带 `degraded` 标识，前端显示提示
+- **Key 安全**：`backend/.env` 与 `frontend/.env.local` 均已被 git 忽略，不会入库
+- **隐私与免责**：首页页脚含数据来源、价格免责与反馈入口
+
+> 本地个人使用足够；若上线对外提供服务，建议升级为账号体系 + Redis 限流 + HTTPS。

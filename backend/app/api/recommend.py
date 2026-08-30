@@ -10,5 +10,5 @@ router = APIRouter()
 
 @router.post("/api/v1/recommend", response_model=RecommendResponse)
 async def recommend_components(req: RecommendRequest):
-    recommendations = recommend(req.params)
-    return RecommendResponse(recommendations=recommendations)
+    recommendations, degraded = recommend(req.params)
+    return RecommendResponse(recommendations=recommendations, degraded=degraded)

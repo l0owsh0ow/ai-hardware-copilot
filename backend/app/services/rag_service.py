@@ -191,7 +191,8 @@ def _structured_filter(candidates: list[dict], params: StructuredParams) -> list
     return filtered
 
 
-def recommend(params: StructuredParams) -> list[Component]:
+def recommend(params: StructuredParams) -> tuple[list[Component], bool]:
+    """推荐元器件。返回 (recommendations, degraded)；LLM 失败时回退规则排序。"""
     settings = get_settings()
     llm = LLMService()
 
@@ -199,7 +200,7 @@ def recommend(params: StructuredParams) -> list[Component]:
     candidates = _structured_filter(candidates, params)
 
     if not candidates:
-        return []
+        return [], False
 
     # 品类均衡压缩候选（每类最多 3 个、总计最多 15 个）：
     # 控制在本地小模型的 4096 上下文内，同时保留品类覆盖
@@ -211,9 +212,15 @@ def recommend(params: StructuredParams) -> list[Component]:
         balanced.extend(per_category[cat][:3])
     candidates = balanced[:15]
 
-    ranked = llm.rank_and_reason(
-        params, candidates, top_n=settings.rag_max_recommendations
-    )
+    degraded = False
+    try:
+        ranked = llm.rank_and_reason(
+            params, candidates, top_n=settings.rag_max_recommendations
+        )
+    except Exception as exc:
+        logger.warning("LLM 排序失败，回退规则排序: %s", str(exc)[:200])
+        ranked = llm._mock_rank(params, candidates, top_n=settings.rag_max_recommendations)
+        degraded = True
 
     # 防幻觉：型号交叉验证 + 数据库字段优先
     by_part = {c["part_number"].lower(): c for c in candidates}
@@ -240,4 +247,4 @@ def recommend(params: StructuredParams) -> list[Component]:
                 match_score=float(item.get("match_score", 0)),
             )
         )
-    return results
+    return results, degraded

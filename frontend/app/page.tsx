@@ -20,8 +20,9 @@ export default function HomePage() {
     setLoading(true);
     setError("");
     try {
-      const params = await parseRequirement(text);
+      const { params, degraded } = await parseRequirement(text);
       store.setParams(params);
+      store.setDegraded(degraded);
       store.setQuery(text);
       store.setRecommendations([]);
       store.setSelected([]);
@@ -69,6 +70,21 @@ export default function HomePage() {
               <GraduationCap className="h-3.5 w-3.5" />
               专为电子专业学生设计
             </div>
+          </div>
+
+          <div className="mt-6 flex flex-col items-center gap-1.5 border-t border-ink-200 pt-5 text-center text-[11px] leading-relaxed text-ink-400">
+            <p>
+              数据来源：立创商城 / 嘉立创 / 厂商官方 Datasheet · 价格仅供参考，请以实际采购为准
+            </p>
+            <p>
+              本地运行模式数据不出本机；使用云端 API 时需求文本将发送至所选 AI 服务商。
+            </p>
+            <a
+              href="mailto:juha75915@gmail.com?subject=AI硬件选型助手反馈"
+              className="text-brand-600 hover:text-brand-700"
+            >
+              反馈问题 / 提交缺失元器件
+            </a>
           </div>
         </div>
       </div>

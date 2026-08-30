@@ -84,6 +84,7 @@ class ParseRequest(BaseModel):
 
 class ParseResponse(BaseModel):
     params: StructuredParams
+    degraded: bool = False
 
 
 class RecommendRequest(BaseModel):
@@ -92,6 +93,7 @@ class RecommendRequest(BaseModel):
 
 class RecommendResponse(BaseModel):
     recommendations: list[Component]
+    degraded: bool = False
 
 
 class BomGenerateRequest(BaseModel):
