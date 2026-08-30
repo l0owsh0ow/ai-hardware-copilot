@@ -7,7 +7,10 @@ LLM_PROVIDER:
 """
 
 import json
+import os
 import re
+import subprocess
+import sys
 import time
 
 import httpx
@@ -35,6 +38,20 @@ PARSE_PROMPT = """你是一个硬件选型助手。请从用户的自然语言�
 {{"application": "...", "power_supply": "...", "power_consumption": "...",
   "communication": [...], "interface": [...], "voltage": "...",
   "budget": "...", "duration": "...", "extra_notes": "..."}}
+
+{example}
+"""
+
+SYSTEM_PROMPT = (
+    "你是一个专业的硬件选型助手。请始终使用简体中文回答。"
+    "严格遵守输出格式要求：只输出 JSON，不要输出任何多余文字，"
+    "不要使用 Markdown 代码块包裹。"
+)
+
+PARSE_EXAMPLE = """示例输入: "我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上"
+示例输出: {"application": "温湿度监测", "power_supply": "电池供电", "power_consumption": "低功耗", "communication": ["蓝牙"], "interface": ["I2C"], "voltage": "", "budget": "", "duration": "6个月以上", "extra_notes": ""}
+
+注意: communication 和 interface 必须是 JSON 数组，即使只有一个元素。
 """
 
 RANK_PROMPT = """你是一个硬件选型专家。根据用户需求参数，从以下候选元器件中选择最匹配的{top_n}个。
@@ -59,6 +76,15 @@ RANK_PROMPT = """你是一个硬件选型专家。根据用户需求参数，从
     "match_score": 0.95
   }}
 ]
+
+示例（需求是温湿度传感器项目时，应优先选择温湿度传感器、低功耗MCU、LDO稳压器）:
+[
+  {{"id": "sensor-sht30", "part_number": "SHT30", "recommend_reason": "I2C接口、低功耗、高精度温湿度传感器，适合环境监测", "match_score": 0.96}},
+  {{"id": "mcu-stm32l432kc", "part_number": "STM32L432KC", "recommend_reason": "超低功耗MCU，适合电池供电的传感器节点", "match_score": 0.93}},
+  {{"id": "power-ht7333", "part_number": "HT7333", "recommend_reason": "超低静态电流LDO，适合电池供电", "match_score": 0.9}}
+]
+
+注意: 必须根据用户需求的应用场景选择对应品类的元器件（如温湿度监测选传感器、小车选电机驱动相关、心率监测选健康类传感器），不能随意选择。
 """
 
 # 各 OpenAI 兼容供应商的默认接口地址
@@ -104,7 +130,9 @@ class LLMService:
         cfg = self._load_llm_settings()
         if cfg["provider"] == "mock":
             return self._mock_parse(text)
-        raw = self._chat(PARSE_PROMPT.format(user_text=text), cfg)
+        raw = self._chat(
+            PARSE_PROMPT.format(user_text=text, example=PARSE_EXAMPLE), cfg
+        )
         data = self._extract_json(raw)
         return StructuredParams(**data)
 
@@ -163,21 +191,66 @@ class LLMService:
         base = cfg.get("base_url") or DEFAULT_BASE_URLS.get(cfg["provider"], "")
         if not base:
             raise RuntimeError("未配置 Base URL")
+        # 本地 Ollama：经子进程调用，规避长驻进程的本地网络拦截
+        if cfg["provider"] == "local":
+            return self._chat_local_via_subprocess(prompt, cfg, base)
         headers = {"Content-Type": "application/json"}
         if cfg.get("api_key"):
             headers["Authorization"] = f"Bearer {cfg['api_key']}"
-        resp = httpx.post(
-            base,
-            headers=headers,
-            json={
-                "model": cfg["model"],
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.2,
-            },
-            timeout=60,
-        )
+        payload = {
+            "model": cfg["model"],
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.2,
+        }
+        # 本地 Ollama：关闭 Qwen3 思考模式 + 模型常驻内存（避免卸载后 502）
+        if cfg["provider"] == "local":
+            payload["think"] = False
+            payload["keep_alive"] = "30m"
+        # 本地模型冷启动/重载瞬间可能返回 502，重试一次
+        attempts = 3 if cfg["provider"] == "local" else 1
+        resp = None
+        for attempt in range(attempts):
+            resp = httpx.post(base, headers=headers, json=payload, timeout=180)
+            if resp.status_code != 502 or attempt == attempts - 1:
+                break
+            time.sleep(3)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
+
+    def _chat_local_via_subprocess(self, prompt: str, cfg: dict, base: str) -> str:
+        """通过短命子进程调用本地 Ollama，避免长驻进程网络层 502 问题。"""
+        helper = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "scripts", "ollama_call.py"
+        )
+        payload = {
+            "url": base,
+            "model": cfg["model"],
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.2,
+            "think": False,
+            "keep_alive": "30m",
+        }
+        for attempt in range(3):
+            proc = subprocess.run(
+                [sys.executable, helper],
+                input=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                capture_output=True,
+                timeout=240,
+            )
+            out = proc.stdout.decode("utf-8", errors="replace").strip()
+            err = proc.stderr.decode("utf-8", errors="replace").strip()
+            if proc.returncode == 0 and out:
+                return out
+            if attempt == 2:
+                raise RuntimeError(err[:300])
+            time.sleep(3)
+        raise RuntimeError("本地模型调用失败")
 
     # ---------- 连通性测试（个人主页"测试连接"用） ----------
 
