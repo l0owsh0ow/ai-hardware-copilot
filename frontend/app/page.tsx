@@ -48,10 +48,10 @@ export default function HomePage() {
               <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />
               AI 驱动 · 已收录 100+ 元器件
             </Badge>
-            <h1 className="mb-3 text-4xl font-semibold tracking-tight text-ink-900 md:text-5xl">
+            <h1 className="mb-3 bg-gradient-to-r from-ink-900 via-ink-800 to-brand-800 bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
               描述你的硬件项目需求
             </h1>
-            <p className="text-lg text-ink-500">用自然语言描述，AI 自动提取参数并推荐元器件方案</p>
+            <p className="text-base text-ink-500">用自然语言描述，AI 自动提取参数并推荐元器件方案</p>
           </div>
 
           {error && (

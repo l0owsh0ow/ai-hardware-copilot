@@ -8,7 +8,7 @@ const STEP_LABELS = ["输入需求", "参数确认", "元件推荐", "BOM导出"
 
 export default function TopBar({ current }: { current: number }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-ink-100 bg-white">
+    <header className="sticky top-0 z-50 border-b border-ink-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 shadow-sm">
