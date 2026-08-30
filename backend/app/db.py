@@ -59,6 +59,16 @@ CREATE TABLE IF NOT EXISTS bom_items (
     FOREIGN KEY (bom_id) REFERENCES bom_records(id),
     FOREIGN KEY (component_id) REFERENCES components(id)
 );
+
+-- 历史记录表：只存紧凑摘要，查看历史不调用 LLM
+CREATE TABLE IF NOT EXISTS history_records (
+    id TEXT PRIMARY KEY,
+    title TEXT,                 -- 应用名称，如"温湿度监测"
+    query_text TEXT,            -- 原始需求（截断保存）
+    params_json TEXT,           -- 结构化参数（紧凑 JSON）
+    recommendations_json TEXT,  -- 推荐结果（不含长推荐理由）
+    created_at TEXT
+);
 """
 
 

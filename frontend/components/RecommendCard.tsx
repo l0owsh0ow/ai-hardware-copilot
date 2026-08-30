@@ -54,10 +54,12 @@ export default function RecommendCard({
   component,
   selected,
   onToggle,
+  readonly = false,
 }: {
   component: Component;
   selected: boolean;
   onToggle: (c: Component) => void;
+  readonly?: boolean;
 }) {
   const badge = badgeFor(component.match_score);
   const reason = REASON_STYLES[badge.reason];
@@ -126,8 +128,8 @@ export default function RecommendCard({
             立创商城
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          {component.datasheet_url && (
+        {readonly ? (
+          component.datasheet_url && (
             <a
               href={component.datasheet_url}
               target="_blank"
@@ -137,18 +139,32 @@ export default function RecommendCard({
               <FileText className="h-3 w-3" />
               Datasheet
             </a>
-          )}
-          <button
-            type="button"
-            onClick={() => onToggle(component)}
-            className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-colors ${
-              selected ? "bg-success-600 hover:bg-success-700" : "bg-brand-600 hover:bg-brand-700"
-            }`}
-          >
-            {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
-            {selected ? "已选" : "加入 BOM"}
-          </button>
-        </div>
+          )
+        ) : (
+          <div className="flex items-center gap-2">
+            {component.datasheet_url && (
+              <a
+                href={component.datasheet_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded-lg border border-brand-200 px-3 py-1.5 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50"
+              >
+                <FileText className="h-3 w-3" />
+                Datasheet
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={() => onToggle(component)}
+              className={`inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-colors ${
+                selected ? "bg-success-600 hover:bg-success-700" : "bg-brand-600 hover:bg-brand-700"
+              }`}
+            >
+              {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+              {selected ? "已选" : "加入 BOM"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

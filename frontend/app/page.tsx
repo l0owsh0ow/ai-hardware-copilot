@@ -22,6 +22,7 @@ export default function HomePage() {
     try {
       const params = await parseRequirement(text);
       store.setParams(params);
+      store.setQuery(text);
       store.setRecommendations([]);
       store.setSelected([]);
       router.push("/recommend");

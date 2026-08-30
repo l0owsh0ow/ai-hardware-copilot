@@ -7,6 +7,7 @@ const KEYS = {
   recommendations: "hc_recommendations",
   bom: "hc_bom",
   selected: "hc_selected",
+  query: "hc_query",
 } as const;
 
 function read<T>(key: string): T | null {
@@ -34,6 +35,8 @@ export const store = {
   setBom: (b: BOMTable) => write(KEYS.bom, b),
   getSelected: () => read<string[]>(KEYS.selected) || [],
   setSelected: (ids: string[]) => write(KEYS.selected, ids),
+  getQuery: () => read<string>(KEYS.query) || "",
+  setQuery: (q: string) => write(KEYS.query, q),
 };
 
 export const CATEGORY_LABELS: Record<string, string> = {

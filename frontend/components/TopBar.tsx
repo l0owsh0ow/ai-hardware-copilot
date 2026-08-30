@@ -57,9 +57,13 @@ export default function TopBar({ current }: { current: number }) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          <button type="button" className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100" title="历史方案">
+          <Link
+            href="/history"
+            className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100"
+            title="历史方案"
+          >
             <History className="h-4 w-4" />
-          </button>
+          </Link>
           <button type="button" className="rounded-lg p-1.5 text-ink-500 transition-colors hover:bg-ink-100" title="帮助">
             <HelpCircle className="h-4 w-4" />
           </button>

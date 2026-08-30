@@ -54,3 +54,16 @@ export interface BOMTable {
   items: BOMItem[];
   total_cost: number;
 }
+
+export interface HistoryListItem {
+  id: string;
+  title: string;
+  query_text: string;
+  created_at: string;
+  count: number;
+}
+
+export interface HistoryDetail extends HistoryListItem {
+  params: StructuredParams;
+  recommendations: Component[];
+}

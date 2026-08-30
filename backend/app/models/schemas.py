@@ -109,3 +109,38 @@ class ComponentDetailResponse(BaseModel):
 
 class ComponentSearchResponse(BaseModel):
     results: list[Component]
+
+
+# ---------- 历史记录 ----------
+
+
+class HistoryCreateRequest(BaseModel):
+    title: str = ""
+    query_text: str = ""
+    params: StructuredParams
+    recommendations: list[Component] = Field(default_factory=list)
+
+
+class HistoryCreateResponse(BaseModel):
+    id: str
+
+
+class HistoryListItem(BaseModel):
+    id: str
+    title: str
+    query_text: str
+    created_at: str
+    count: int
+
+
+class HistoryListResponse(BaseModel):
+    items: list[HistoryListItem]
+
+
+class HistoryDetailResponse(BaseModel):
+    id: str
+    title: str
+    query_text: str
+    created_at: str
+    params: StructuredParams
+    recommendations: list[Component]

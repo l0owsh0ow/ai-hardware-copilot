@@ -1,4 +1,11 @@
-import type { BOMTable, Component, ComponentDetail, StructuredParams } from "./types";
+import type {
+  BOMTable,
+  Component,
+  ComponentDetail,
+  HistoryDetail,
+  HistoryListItem,
+  StructuredParams,
+} from "./types";
 
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -61,4 +68,39 @@ export function exportBomUrl(
     );
   }
   return `${API_BASE}/api/v1/bom/${encodeURIComponent(bomId)}/export?${params.toString()}`;
+}
+
+export async function saveHistory(payload: {
+  title: string;
+  query_text: string;
+  params: StructuredParams;
+  recommendations: Component[];
+}) {
+  const data = await post<{ id: string }>("/api/v1/history", payload);
+  return data.id;
+}
+
+export async function fetchHistoryList(): Promise<HistoryListItem[]> {
+  const resp = await fetch(`${API_BASE}/api/v1/history`);
+  if (!resp.ok) throw new Error(`获取历史失败 (${resp.status})`);
+  const data = (await resp.json()) as { items: HistoryListItem[] };
+  return data.items;
+}
+
+export async function fetchHistoryDetail(id: string): Promise<HistoryDetail> {
+  const resp = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(id)}`);
+  if (!resp.ok) throw new Error(`获取历史详情失败 (${resp.status})`);
+  return (await resp.json()) as HistoryDetail;
+}
+
+export async function deleteHistory(id: string) {
+  const resp = await fetch(`${API_BASE}/api/v1/history/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  if (!resp.ok) throw new Error(`删除失败 (${resp.status})`);
+}
+
+export async function clearHistory() {
+  const resp = await fetch(`${API_BASE}/api/v1/history`, { method: "DELETE" });
+  if (!resp.ok) throw new Error(`清空失败 (${resp.status})`);
 }

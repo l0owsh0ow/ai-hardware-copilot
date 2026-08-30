@@ -27,7 +27,7 @@ import RecommendCard from "@/components/RecommendCard";
 import SkeletonCards from "@/components/SkeletonCards";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
-import { fetchRecommendations, generateBom } from "@/lib/api";
+import { fetchRecommendations, generateBom, saveHistory } from "@/lib/api";
 import { showToast } from "@/lib/toast";
 import { CATEGORY_LABELS, store } from "@/lib/store";
 import type { Component, StructuredParams } from "@/lib/types";
@@ -89,6 +89,15 @@ export default function RecommendPage() {
       const recs = await fetchRecommendations(params);
       setRecommendations(recs);
       store.setRecommendations(recs);
+      // 自动存档历史（纯数据库，查看时不消耗 token）
+      saveHistory({
+        title: params.application || store.getQuery().slice(0, 20) || "未命名方案",
+        query_text: store.getQuery(),
+        params,
+        recommendations: recs,
+      }).catch(() => {
+        /* 存档失败不影响主流程 */
+      });
       setFilter("all");
       setStage("recs");
     } catch (e) {
