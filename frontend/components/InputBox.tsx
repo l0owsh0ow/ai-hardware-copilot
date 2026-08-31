@@ -82,9 +82,9 @@ export default function InputBox({
 
   if (loading) {
     return (
-      <div className="volt-card mx-auto max-w-3xl p-8">
+      <div className="voxel-card mx-auto max-w-3xl p-8">
         <div className="mb-8 text-center">
-          <div className="volt-aurora mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl">
+          <div className="voxel-block mb-4 inline-flex h-14 w-14 items-center justify-center bg-brand-100">
             <svg className="h-7 w-7 animate-spin text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -106,13 +106,13 @@ export default function InputBox({
 
         <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="rounded-2xl border border-ink-100 bg-white p-4">
+            <div key={i} className="rounded-none border-2 border-ink-950 bg-white p-4">
               <div className="skeleton mb-2 h-3 w-16 rounded" />
               <div className="skeleton h-5 w-24 rounded" />
             </div>
           ))}
         </div>
-        <div className="rounded-2xl border border-ink-100 bg-white p-6">
+        <div className="rounded-none border-2 border-ink-950 bg-white p-6">
           <div className="skeleton mb-4 h-4 w-40 rounded" />
           <div className="space-y-3">
             <div className="skeleton h-3 w-full rounded" />
@@ -125,11 +125,11 @@ export default function InputBox({
   }
 
   return (
-    <div className="volt-card mx-auto max-w-3xl overflow-hidden !rounded-[26px] shadow-[0_34px_80px_rgba(15,31,61,.18)]">
+      <div className="voxel-card mx-auto max-w-3xl overflow-hidden">
       <div className="p-6">
         <div className="mb-3 flex items-center justify-between">
           <label className="flex items-center gap-2 text-sm font-semibold text-ink-800">
-            <span className="volt-aurora grid h-8 w-8 place-items-center rounded-xl text-brand-600">
+            <span className="voxel-block grid h-8 w-8 place-items-center bg-brand-100 text-brand-700">
               <MessageSquareText className="h-4 w-4" />
             </span>
             项目需求描述
@@ -142,7 +142,7 @@ export default function InputBox({
         <Textarea
           rows={4}
           maxLength={500}
-          className="scrollbar-thin w-full resize-none rounded-xl border border-ink-100 bg-ink-50/60 px-4 py-3 text-sm text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
+          className="scrollbar-thin w-full resize-none rounded-none border-2 border-ink-950 bg-ink-50/60 px-4 py-3 text-sm text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-600 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
           placeholder="例如：我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -171,7 +171,7 @@ export default function InputBox({
                 key={ex.short}
                 type="button"
                 onClick={() => setText(ex.text)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 transition-all hover:bg-brand-100"
+                className="voxel-chip px-3 py-1.5 text-xs font-medium text-brand-800 transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
               >
                 <ex.Icon className="h-3 w-3" />
                 {ex.short}
@@ -181,9 +181,9 @@ export default function InputBox({
         </div>
       </div>
 
-      <div className="h-px bg-ink-100" />
+      <div className="h-0.5 bg-ink-950" />
 
-      <div className="bg-ink-50/70 p-6">
+      <div className="bg-ink-50 p-6">
         <div className="mb-4 flex items-center gap-2 text-sm font-medium text-ink-600">
           <SlidersHorizontal className="h-4 w-4 text-ink-400" />
           补充参数
@@ -195,7 +195,7 @@ export default function InputBox({
               <label className="mb-1.5 block text-xs text-ink-500">{s.label}</label>
               <div className="relative">
                 <select
-                  className="w-full cursor-pointer appearance-none rounded-xl border border-ink-100 bg-white py-2 pl-3 pr-8 text-sm text-ink-700 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full cursor-pointer appearance-none rounded-none border-2 border-ink-950 bg-white py-2 pl-3 pr-8 text-sm text-ink-700 outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
                   value={s.value}
                   onChange={(e) => s.set(e.target.value)}
                 >
@@ -210,7 +210,7 @@ export default function InputBox({
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t border-ink-100 bg-white p-4">
+      <div className="flex items-center justify-between gap-3 border-t-2 border-ink-950 bg-white p-4">
         <div className="flex items-center gap-1.5 text-xs text-ink-400">
           <ShieldCheck className="h-3.5 w-3.5 text-success-500" />
           数据来源：立创商城 · Datasheet
@@ -219,7 +219,7 @@ export default function InputBox({
           <button
             type="button"
             onClick={() => setText("")}
-            className="btn-secondary !py-2 text-sm"
+            className="voxel-btn voxel-btn-ghost !px-4 !py-2 text-sm"
           >
             <Eraser className="h-4 w-4" />
             清空
@@ -228,7 +228,7 @@ export default function InputBox({
             type="button"
             onClick={submit}
             disabled={!text.trim()}
-            className="btn-primary"
+            className="voxel-btn"
           >
             <span>开始选型</span>
             <span className="arr">

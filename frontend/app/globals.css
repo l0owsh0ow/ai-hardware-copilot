@@ -489,19 +489,18 @@
     justify-content: space-between;
     gap: 12px;
     padding: 11px 14px;
-    border-radius: 999px;
+    border-radius: 0;
     background: #ffffff;
-    border: 1px solid #e4eaf4;
+    border: 3px solid #0a1b4d;
     box-shadow:
-      0 14px 40px rgba(15, 31, 61, 0.1),
-      0 2px 6px rgba(15, 31, 61, 0.05);
+      6px 6px 0 rgba(10, 27, 77, 0.85);
     transition:
       box-shadow 0.5s cubic-bezier(.22, .61, .36, 1),
       border-color 0.5s cubic-bezier(.22, .61, .36, 1);
   }
   .volt-nav-pill:hover {
     border-color: rgba(47, 107, 255, 0.3);
-    box-shadow: 0 18px 48px rgba(47, 107, 255, 0.14);
+    box-shadow: 6px 6px 0 rgba(10, 27, 77, 0.85);
   }
 
   /* 全屏移动端菜单：链接逐条上浮 */
@@ -548,6 +547,179 @@
   .volt-menu.open a:nth-child(2) { transition-delay: 0.14s; }
   .volt-menu.open a:nth-child(3) { transition-delay: 0.2s; }
   .volt-menu.open a:nth-child(4) { transition-delay: 0.26s; }
+}
+
+/* ============================================================
+   立体像素（体素）风格：直角、粗描边、实体偏移阴影、方块动效
+   ============================================================ */
+@layer components {
+  .voxel-card {
+    background: #fff;
+    border: 3px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow: 6px 6px 0 rgba(10, 27, 77, 0.85);
+  }
+
+  .voxel-panel-dark {
+    background: #122c7a;
+    border: 3px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow: 8px 8px 0 rgba(10, 27, 77, 0.85);
+  }
+
+  .voxel-panel-light {
+    background: #f4f7fb;
+    border: 2px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.75);
+  }
+
+  .voxel-block {
+    position: relative;
+    border: 2px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.8);
+  }
+
+  .voxel-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eaf1ff;
+    border: 2px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 rgba(10, 27, 77, 0.75);
+  }
+
+  .voxel-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(180deg, #4a80ff, #2f6bff);
+    border: 3px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.9);
+    white-space: nowrap;
+    transition:
+      transform 0.08s ease,
+      box-shadow 0.08s ease,
+      filter 0.2s ease;
+  }
+  .voxel-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 rgba(10, 27, 77, 0.9);
+    filter: brightness(1.06);
+  }
+  .voxel-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0 rgba(10, 27, 77, 0.9);
+  }
+  .voxel-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .voxel-btn .arr {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
+    border: 2px solid #0a1b4d;
+    background: #12b76a;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+  .voxel-btn-ghost {
+    background: #fff;
+    color: #122c7a;
+  }
+  .voxel-btn-ghost .arr {
+    background: #eaf1ff;
+    color: #1c46c6;
+  }
+
+  /* 像素网格叠层（Hero 背景纹理） */
+  .pixel-grid {
+    background-image:
+      linear-gradient(rgba(10, 27, 77, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10, 27, 77, 0.09) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+
+  /* 像素步进光泽（替代平滑流光） */
+  .voxel-scan::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 18%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 82%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: voxelScan 3.2s steps(6) infinite;
+  }
+  @keyframes voxelScan {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* 立体体素方块（我的世界式等距立方体） */
+  .voxel-cube {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    transform-style: preserve-3d;
+    transform: rotateX(-30deg) rotateY(45deg);
+    animation: cubeBob 5s ease-in-out infinite;
+  }
+  .voxel-cube .voxel-face {
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(10, 27, 77, 0.95);
+  }
+  .voxel-cube .front {
+    transform: translateZ(26px);
+  }
+  .voxel-cube .top {
+    transform: rotateX(90deg) translateZ(26px);
+  }
+  .voxel-cube .side {
+    transform: rotateY(90deg) translateZ(26px);
+  }
+  .cube-blue .front { background: #2f6bff; }
+  .cube-blue .top { background: #8fb4ff; }
+  .cube-blue .side { background: #1c46c6; }
+  .cube-green .front { background: #12b76a; }
+  .cube-green .top { background: #64d69b; }
+  .cube-green .side { background: #0b844e; }
+  @keyframes cubeBob {
+    0%,
+    100% {
+      transform: rotateX(-30deg) rotateY(45deg) translateY(0);
+    }
+    50% {
+      transform: rotateX(-30deg) rotateY(45deg) translateY(-9px);
+    }
+  }
+
+  /* 像素硬边文字阴影 */
+  .voxel-text-shadow {
+    text-shadow: 3px 3px 0 rgba(10, 27, 77, 0.85);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

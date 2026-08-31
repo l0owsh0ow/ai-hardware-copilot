@@ -34,19 +34,19 @@ const PAINS = [
     Icon: SearchX,
     title: "信息过载",
     desc: "参数表格几十列，型号成千上万，看完还是不知道买哪个。",
-    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
+    tint: "voxel-block bg-brand-100 text-brand-700",
   },
   {
     Icon: Wallet,
     title: "预算错配",
     desc: "照着教程买，要么性能过剩白花钱，要么关键参数不匹配。",
-    tint: "volt-aurora green text-success-600 ring-1 ring-success-100/70",
+    tint: "voxel-block bg-success-100 text-success-700",
   },
   {
     Icon: AlertTriangle,
     title: "怕被坑",
     desc: "型号水太深，停产、假货、封装对不上，踩坑成本太高。",
-    tint: "volt-aurora amber text-amber-600 ring-1 ring-amber-100/70",
+    tint: "voxel-block bg-amber-100 text-amber-700",
   },
 ];
 
@@ -55,7 +55,7 @@ const CAPABILITIES = [
     Icon: MessagesSquare,
     title: "一句话需求 → 结构化参数",
     desc: "自动识别用途、供电、功耗、通信和预算，不用填表。",
-    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
+    tint: "voxel-block bg-brand-100 text-brand-700",
     chip: "供电、通信、接口、预算",
     wide: true,
     chat: true,
@@ -64,7 +64,7 @@ const CAPABILITIES = [
     Icon: Wallet,
     title: "预算平替",
     desc: "在预算内找参数接近的替代型号，不盲目追贵。",
-    tint: "volt-aurora green text-success-600 ring-1 ring-success-100/70",
+    tint: "voxel-block bg-success-100 text-success-700",
     chip: "预算内 · 高性价比",
     wide: false,
   },
@@ -72,7 +72,7 @@ const CAPABILITIES = [
     Icon: ShieldCheck,
     title: "兼容性体检",
     desc: "供电、接口、电平自动核对，避免买回来装不上。",
-    tint: "volt-aurora neutral text-ink-600 ring-1 ring-ink-100/80",
+    tint: "voxel-block bg-ink-100 text-ink-700",
     chip: "接口、电平、供电",
     wide: false,
   },
@@ -80,7 +80,7 @@ const CAPABILITIES = [
     Icon: SlidersHorizontal,
     title: "性能可视化",
     desc: "功耗、频率、精度逐项量化，选型不靠猜。",
-    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
+    tint: "voxel-block bg-brand-100 text-brand-700",
     chip: "工作电压、待机电流、精度",
     wide: false,
     bars: [72, 88, 64, 96, 80],
@@ -89,7 +89,7 @@ const CAPABILITIES = [
     Icon: FileText,
     title: "Datasheet 溯源",
     desc: "每个推荐都带官方数据手册链接，可自行核验。",
-    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
+    tint: "voxel-block bg-brand-100 text-brand-700",
     chip: "datasheet → 立创商城",
     wide: false,
   },
@@ -97,7 +97,7 @@ const CAPABILITIES = [
     Icon: Lock,
     title: "本地优先，数据不出机",
     desc: "历史记录存本地数据库，查看不消耗 token；可配 DeepSeek / OpenAI / 本地 Ollama，也能完全离线规则模式。",
-    tint: "volt-aurora green text-success-600 ring-1 ring-success-100/70",
+    tint: "voxel-block bg-success-100 text-success-700",
     chip: "localhost / SQLite / BYOK",
     wide: true,
   },
@@ -181,35 +181,50 @@ export default function HomePage() {
         }`}
       >
         {/* 态度鲜明的首屏 */}
-        <div className="flex min-h-[100dvh] flex-col items-center justify-center px-6 pt-24 pb-20 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-[rgba(11,32,72,.42)] px-3 py-1 text-[11.5px] font-medium uppercase tracking-[0.2em] text-white">
-            <i className="h-px w-4 bg-white/70" />
-            AI · 元器件选型
-            <i className="h-px w-4 bg-white/70" />
-          </span>
-          <h1 className="mt-8 text-[52px] font-bold leading-[1.05] tracking-tight text-white drop-shadow-[0_2px_26px_rgba(6,20,50,.55)] md:text-[76px]">
-            选硬件，
-            <span className="text-success-400">不选错。</span>
-          </h1>
-          <p className="mt-6 max-w-[40ch] text-[18px] leading-relaxed text-[#eafeff] drop-shadow-[0_1px_16px_rgba(6,20,50,.5)]">
-            读懂专业、预算和真实用途，30 秒配出兼容、够用、不溢价的方案。
-          </p>
+        <div className="relative flex min-h-[100dvh] flex-col items-center justify-center px-6 pt-24 pb-20 text-center">
+          <div className="pixel-grid pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
 
-          <div className="mt-20 flex flex-col items-center gap-6">
-            <button type="button" onClick={startApp} className="btn-primary !px-9 !py-4 text-lg">
-              <span>开始选型</span>
-              <span className="arr !h-9 !w-9">
-                <ArrowRight className="h-4 w-4" />
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={scrollToDetails}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-white/80 transition-colors hover:text-white"
-            >
-              查看详细产品介绍
-              <ArrowRight className="h-3.5 w-3.5" />
-            </button>
+          {/* 立体体素方块装饰 */}
+          <div className="voxel-cube cube-blue pointer-events-none absolute left-[7%] top-[22%] z-0 hidden lg:block" aria-hidden="true">
+            <div className="voxel-face front" />
+            <div className="voxel-face top" />
+            <div className="voxel-face side" />
+          </div>
+          <div
+            className="voxel-cube cube-green pointer-events-none absolute bottom-[20%] right-[9%] z-0 hidden lg:block"
+            style={{ animationDelay: "1.7s" }}
+            aria-hidden="true"
+          >
+            <div className="voxel-face front" />
+            <div className="voxel-face top" />
+            <div className="voxel-face side" />
+          </div>
+
+          <div className="voxel-panel-dark relative z-10 w-full max-w-3xl px-7 py-10 md:px-12 md:py-12">
+            <span className="voxel-chip px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-800">
+              AI · 元器件选型
+            </span>
+            <h1 className="voxel-text-shadow mt-6 text-5xl font-bold tracking-tight text-white md:text-7xl">
+              选型工作台
+            </h1>
+            <p className="mx-auto mt-5 max-w-[44ch] text-[17px] leading-relaxed text-[#cfe0ff]">
+              读懂专业、预算和真实用途，30 秒配出兼容、够用、不溢价的方案。
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+              <button type="button" onClick={startApp} className="voxel-btn px-7 py-3.5 text-lg">
+                <span>开始选型</span>
+                <span className="arr">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </button>
+              <button type="button" onClick={scrollToDetails} className="voxel-btn voxel-btn-ghost px-6 py-3.5 text-lg">
+                <span>看核心能力</span>
+                <span className="arr">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -230,8 +245,8 @@ export default function HomePage() {
             <div className="grid gap-4 md:grid-cols-3">
               {PAINS.map((p) => (
                 <Reveal key={p.title}>
-                  <div className="card-hover volt-card h-full p-7">
-                    <span className={`mb-4 grid h-12 w-12 place-items-center rounded-2xl ${p.tint}`}>
+                  <div className="card-hover voxel-card h-full p-7">
+                    <span className={`mb-4 grid h-12 w-12 place-items-center ${p.tint}`}>
                       <p.Icon className="h-5 w-5" />
                     </span>
                     <h3 className="text-[21px] font-semibold text-ink-900">{p.title}</h3>
@@ -253,15 +268,15 @@ export default function HomePage() {
                 const cls = c.wide ? "col-span-12 md:col-span-8" : "col-span-12 md:col-span-4";
                 return (
                   <Reveal key={c.title} className={cls}>
-                    <div className="volt-card flex h-full flex-col p-6">
-                      <span className={`mb-3 grid h-11 w-11 place-items-center rounded-xl ${c.tint}`}>
+                    <div className="voxel-card flex h-full flex-col p-6">
+                      <span className={`mb-3 grid h-11 w-11 place-items-center ${c.tint}`}>
                         <c.Icon className="h-5 w-5" />
                       </span>
                       <h3 className="text-[19px] font-semibold text-ink-900">{c.title}</h3>
                       <p className="mt-1 text-sm leading-relaxed text-ink-500">{c.desc}</p>
 
                       {c.chat && (
-                        <div className="mt-5 rounded-2xl border border-ink-100/80 bg-gradient-to-br from-white to-ink-50 p-4 shadow-sm">
+                        <div className="voxel-panel-light mt-5 p-4">
                           <div className="mb-1.5 flex items-center justify-between font-mono text-[11px] text-ink-400">
                             <span className="flex items-center gap-2">
                               <span className="text-success-500">▲</span>
@@ -288,7 +303,7 @@ export default function HomePage() {
                           {c.bars.map((h, j) => (
                             <span
                               key={j}
-                              className={`w-full rounded-t-md ${j % 2 === 0 ? "bg-brand-500/80" : "bg-success-500/80"}`}
+                              className={`w-full ${j % 2 === 0 ? "bg-brand-500/80" : "bg-success-500/80"}`}
                               style={{ height: `${h}%` }}
                             />
                           ))}
@@ -297,7 +312,7 @@ export default function HomePage() {
 
                       {c.chip && (
                         <div className={`${c.chat || c.bars ? "mt-4" : "mt-auto pt-4"}`}>
-                          <div className="rounded-xl border border-ink-100/70 bg-gradient-to-br from-white/90 to-ink-50/90 px-3 py-2 font-mono text-[12px] text-ink-500 shadow-sm">
+                          <div className="voxel-chip px-3 py-2 font-mono text-[12px] text-ink-700">
                             {c.chip}
                           </div>
                         </div>
@@ -316,8 +331,8 @@ export default function HomePage() {
             <div className="grid gap-4 md:grid-cols-3">
               {STEPS.map((s) => (
                 <Reveal key={s.title}>
-                  <div className="volt-card flex h-full items-start gap-4 p-6">
-                    <span className="volt-aurora grid h-10 w-10 flex-none place-items-center rounded-full text-brand-600">
+                  <div className="voxel-card flex h-full items-start gap-4 p-6">
+                    <span className="voxel-block grid h-10 w-10 flex-none place-items-center bg-brand-100 text-brand-700">
                       <s.Icon className="h-4 w-4" />
                     </span>
                     <div>
@@ -330,19 +345,19 @@ export default function HomePage() {
             </div>
 
             <Reveal>
-              <div className="volt-flow mt-16 rounded-[28px] bg-gradient-to-br from-brand-800 to-brand-500 p-3 shadow-[0_40px_90px_rgba(47,107,255,.28)]">
-                <div className="rounded-3xl border border-white/20 bg-white/10 px-8 py-12 text-center">
-                  <h2 className="text-[30px] font-bold tracking-tight text-white md:text-[40px]">现在开始第一次选型</h2>
-                  <p className="mx-auto mt-3 max-w-[44ch] text-[15px] text-[#e4ecff]">
-                    描述你的第一个项目，AI 会给出完整的元器件方案。
-                  </p>
-                  <button type="button" onClick={startApp} className="btn-primary mt-8">
-                    <span>开始选型</span>
-                    <span className="arr bg-success-500 !text-white">
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                  </button>
-                </div>
+              <div className="voxel-scan voxel-panel-dark relative mt-16 px-8 py-12 text-center">
+                <h2 className="voxel-text-shadow text-[30px] font-bold tracking-tight text-white md:text-[40px]">
+                  现在开始第一次选型
+                </h2>
+                <p className="mx-auto mt-3 max-w-[44ch] text-[15px] text-[#cfe0ff]">
+                  描述你的第一个项目，AI 会给出完整的元器件方案。
+                </p>
+                <button type="button" onClick={startApp} className="voxel-btn voxel-btn-ghost mx-auto mt-8 px-7 py-3 text-lg">
+                  <span>开始选型</span>
+                  <span className="arr">
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </button>
               </div>
             </Reveal>
           </div>
@@ -366,13 +381,13 @@ export default function HomePage() {
                   introRef.current?.scrollTo({ top: 0 });
                   setStage("intro");
                 }}
-                className="btn-secondary absolute -left-2 top-4 !py-2 text-xs"
+                className="voxel-btn voxel-btn-ghost absolute -left-2 top-4 !px-3 !py-1.5 text-xs"
               >
                 <ArrowRight className="h-3.5 w-3.5 rotate-180" />
                 返回首页
               </button>
               <div className="animate-slide-up text-center">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+                <div className="voxel-chip mb-4 px-3 py-1 text-xs font-medium text-brand-800">
                   <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />
                   AI 驱动 · 已收录 100+ 元器件
                 </div>

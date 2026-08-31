@@ -32,7 +32,7 @@ export default function TopBar({
       <div className="volt-nav">
         <nav className="volt-nav-pill" aria-label="主导航">
           <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-[0_6px_16px_rgba(47,107,255,.35),inset_0_1px_1px_rgba(255,255,255,.35)]">
+            <span className="voxel-block grid h-9 w-9 place-items-center bg-gradient-to-br from-brand-500 to-brand-700 text-white">
               <Zap className="h-4 w-4 fill-current" strokeWidth={2} />
             </span>
             <span className="text-[17px] font-bold tracking-tight text-ink-900">
@@ -58,12 +58,12 @@ export default function TopBar({
                     )}
                     <div className="flex items-center gap-1.5">
                       <span
-                        className={`grid h-7 w-7 place-items-center rounded-full text-xs font-medium transition-all ${
+                        className={`grid h-7 w-7 place-items-center rounded-none text-xs font-medium transition-all ${
                           state === "active"
-                            ? "bg-brand-600 text-white shadow-[0_6px_14px_rgba(47,107,255,.35)]"
+                            ? "bg-brand-600 text-white shadow-[3px_3px_0_rgba(10,27,77,.8)]"
                             : state === "done"
                               ? "bg-success-500 text-white"
-                              : "bg-ink-100 text-ink-400"
+                              : "border-2 border-ink-950 bg-ink-100 text-ink-400"
                         }`}
                       >
                         {state === "done" ? <Check className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
@@ -98,21 +98,21 @@ export default function TopBar({
             <Link
               href="/history"
               title="历史方案"
-              className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition-colors hover:bg-ink-100 hover:text-brand-600"
+              className="grid h-8 w-8 place-items-center rounded-none border-2 border-ink-950 bg-white text-ink-700 shadow-[3px_3px_0_rgba(10,27,77,.75)] transition-transform hover:-translate-x-[1px] hover:-translate-y-[1px] hover:text-brand-600"
             >
               <History className="h-4 w-4" />
             </Link>
             <Link
               href="/admin"
               title="管理后台"
-              className="grid h-8 w-8 place-items-center rounded-full text-ink-400 transition-colors hover:bg-ink-100 hover:text-brand-600"
+              className="grid h-8 w-8 place-items-center rounded-none border-2 border-ink-950 bg-white text-ink-700 shadow-[3px_3px_0_rgba(10,27,77,.75)] transition-transform hover:-translate-x-[1px] hover:-translate-y-[1px] hover:text-brand-600"
             >
               <Database className="h-4 w-4" />
             </Link>
             <Link
               href="/profile"
               title="个人主页"
-              className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-brand-400 to-brand-700 text-xs font-medium text-white transition-opacity hover:opacity-80"
+              className="grid h-8 w-8 place-items-center rounded-none border-2 border-ink-950 bg-gradient-to-br from-brand-400 to-brand-700 text-xs font-medium text-white shadow-[3px_3px_0_rgba(10,27,77,.75)]"
             >
               KJ
             </Link>
@@ -123,7 +123,7 @@ export default function TopBar({
               <button
                 type="button"
                 onClick={onStart}
-                className="btn-primary hidden sm:inline-flex"
+                className="voxel-btn hidden !px-5 !py-2.5 text-sm sm:inline-flex"
               >
                 <span>开始选型</span>
                 <span className="arr">
@@ -145,7 +145,7 @@ export default function TopBar({
               <Link
                 href="/#engine"
                 onClick={() => setOpen(false)}
-                className="btn-primary hidden sm:inline-flex"
+                className="voxel-btn hidden !px-5 !py-2.5 text-sm sm:inline-flex"
               >
                 <span>开始选型</span>
                 <span className="arr">
@@ -169,7 +169,7 @@ export default function TopBar({
               type="button"
               aria-label="菜单"
               onClick={() => setOpen((v) => !v)}
-              className="grid h-9 w-9 place-items-center rounded-full border border-ink-200 bg-white text-ink-700 md:hidden"
+              className="grid h-9 w-9 place-items-center rounded-none border-2 border-ink-950 bg-white text-ink-700 shadow-[3px_3px_0_rgba(10,27,77,.75)] md:hidden"
             >
               {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
