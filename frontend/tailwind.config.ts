@@ -97,7 +97,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Outfit", "Noto Sans SC", "Microsoft YaHei", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["Cubic 11", "Outfit", "Noto Sans SC", "Microsoft YaHei", "system-ui", "-apple-system", "sans-serif"],
         mono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       boxShadow: {
