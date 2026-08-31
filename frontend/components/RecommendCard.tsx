@@ -19,20 +19,20 @@ function badgeFor(score: number) {
   if (score >= 0.9)
     return {
       label: `最佳匹配 ${Math.round(score * 100)}%`,
-      cls: "bg-success-50 text-success-700",
+      cls: "border border-success-100/80 bg-gradient-to-br from-success-50 to-white text-success-700",
       Icon: Award,
       reason: "brand",
     };
   if (score >= 0.8)
     return {
       label: `推荐 ${Math.round(score * 100)}%`,
-      cls: "bg-brand-50 text-brand-700",
+      cls: "border border-brand-100/80 bg-gradient-to-br from-brand-50 to-white text-brand-700",
       Icon: Info,
       reason: "ink",
     };
   return {
     label: `可选 ${Math.round(score * 100)}%`,
-    cls: "bg-amber-50 text-amber-700",
+    cls: "border border-amber-100/80 bg-gradient-to-br from-amber-50 to-white text-amber-700",
     Icon: AlertTriangle,
     reason: "amber",
   };

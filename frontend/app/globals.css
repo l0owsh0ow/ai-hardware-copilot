@@ -84,8 +84,9 @@
     border: 1px solid var(--volt-line, #e4eaf4);
     border-radius: 26px;
     box-shadow:
-      0 14px 40px rgba(15, 31, 61, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      0 1px 2px rgba(15, 31, 61, 0.04),
+      0 24px 48px -16px rgba(15, 31, 61, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
   }
 
   .skeleton {
@@ -125,6 +126,9 @@
 
   /* 主按钮 = 蓝底白字 + 绿色圆形箭头内嵌；胶囊形 */
   .btn-primary {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -161,6 +165,34 @@
   }
   .btn-primary .arr {
     background: #12b76a;
+  }
+  /* 主按钮流光：缓慢扫过的高光 */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.16) 42%,
+      rgba(255, 255, 255, 0.36) 50%,
+      rgba(255, 255, 255, 0.16) 58%,
+      transparent 75%
+    );
+    transform: translateX(-150%) skewX(-12deg);
+    animation: voltSheen 5s ease-in-out infinite;
+  }
+  @keyframes voltSheen {
+    0%,
+    32% {
+      transform: translateX(-150%) skewX(-12deg);
+    }
+    58%,
+    100% {
+      transform: translateX(170%) skewX(-12deg);
+    }
   }
 
   /* 圆形内嵌箭头 */
@@ -248,6 +280,42 @@
     transform: translate(3px, -3px) scale(1.05);
   }
 
+  /* 渐变面板流光（用于 CTA 转化带） */
+  .volt-flow {
+    position: relative;
+    overflow: hidden;
+  }
+  .volt-flow::before {
+    content: "";
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    left: -10%;
+    width: 36%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 45%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.12) 55%,
+      transparent 100%
+    );
+    transform: translateX(-280%) skewX(-14deg);
+    animation: voltFlowSweep 7.5s ease-in-out infinite;
+  }
+  @keyframes voltFlowSweep {
+    0%,
+    38% {
+      transform: translateX(-280%) skewX(-14deg);
+    }
+    62%,
+    100% {
+      transform: translateX(440%) skewX(-14deg);
+    }
+  }
+
   .badge-pulse {
     animation: pulseSoft 2s infinite ease-in-out;
   }
@@ -281,9 +349,10 @@
     background: #f4f7fb;
   }
   .filter-btn.active {
-    background: #2f6bff;
-    border-color: #2f6bff;
+    background: linear-gradient(140deg, #4a80ff, #2f6bff);
+    border-color: rgba(47, 107, 255, 0.6);
     color: #fff;
+    box-shadow: 0 8px 18px rgba(47, 107, 255, 0.28);
   }
 
   .back-to-top {

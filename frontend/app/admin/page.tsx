@@ -185,7 +185,7 @@ export default function AdminPage() {
                 onClick={() => setTab(value as "kb" | "analytics")}
                 className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all ${
                   tab === value
-                    ? "bg-brand-600 text-white shadow-[0_8px_18px_rgba(47,107,255,.32)]"
+                    ? "bg-gradient-to-r from-brand-600 to-brand-500 text-white shadow-[0_8px_18px_rgba(47,107,255,.32)]"
                     : "border border-ink-100 bg-white text-ink-600 hover:bg-ink-50"
                 }`}
               >
