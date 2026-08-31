@@ -113,7 +113,7 @@ export default function ProfilePage() {
     <main>
       <TopBar current={0} />
       <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto max-w-3xl">
           <div className="mb-1 flex items-center gap-2">
             <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
               <Settings2 className="h-5 w-5 text-brand-600" />
@@ -130,14 +130,14 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <Card className="border-ink-100 shadow-lg">
+          <Card className="border-ink-100 shadow-lg [--card-spacing:--spacing(6)]">
             <CardHeader>
-              <CardTitle className="text-lg">模型配置</CardTitle>
-              <CardDescription className="text-sm text-ink-500">
+              <CardTitle className="text-xl">模型配置</CardTitle>
+              <CardDescription className="text-sm leading-relaxed text-ink-500">
                 解析与推荐都会使用这里的设置，Key 只保存在本地数据库。
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="provider" className="text-sm font-medium text-ink-700">
                   LLM 供应商
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     setBaseUrl(v === "local" ? "http://localhost:11434/v1/chat/completions" : "");
                   }}
                 >
-                  <SelectTrigger id="provider" className="w-full">
+                  <SelectTrigger id="provider" className="h-10 w-full">
                     <SelectValue placeholder="选择供应商" />
                   </SelectTrigger>
                   <SelectContent>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                   </Label>
                   <Input
                     id="baseUrl"
-                    className="bg-ink-50/50 focus:bg-white"
+                    className="h-10 bg-ink-50/50 px-3 focus:bg-white"
                     placeholder="http://localhost:11434/v1/chat/completions"
                     value={baseUrl}
                     onChange={(e) => setBaseUrl(e.target.value)}
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                 </Label>
                 <Input
                   id="model"
-                  className="bg-ink-50/50 focus:bg-white"
+                  className="h-10 bg-ink-50/50 px-3 focus:bg-white"
                   placeholder={MODEL_PLACEHOLDERS[provider] || "deepseek-chat"}
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
@@ -207,7 +207,7 @@ export default function ProfilePage() {
                   <Input
                     id="apiKey"
                     type="password"
-                    className="bg-ink-50/50 focus:bg-white"
+                    className="h-10 bg-ink-50/50 px-3 focus:bg-white"
                     placeholder={settings?.api_key_set ? "留空表示保留当前 Key" : "输入你的 API Key"}
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
@@ -222,6 +222,7 @@ export default function ProfilePage() {
                   variant="outline"
                   onClick={handleTest}
                   disabled={testing || provider === "mock"}
+                  size="lg"
                   className="rounded-full"
                 >
                   {testing ? <Loader2 className="animate-spin" /> : <Server />}
@@ -231,7 +232,8 @@ export default function ProfilePage() {
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
-                  className="rounded-full px-5"
+                  size="lg"
+                  className="rounded-full px-6"
                 >
                   {saving ? <Loader2 className="animate-spin" /> : <Save />}
                   保存配置
@@ -264,11 +266,11 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <Card className="mt-6 border-ink-100 shadow-sm">
+          <Card className="mt-6 border-ink-100 shadow-sm [--card-spacing:--spacing(6)]">
             <CardHeader>
-              <CardTitle className="text-sm">使用说明</CardTitle>
+              <CardTitle className="text-base">使用说明</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1.5 text-xs leading-relaxed text-ink-500">
+            <CardContent className="space-y-2 text-sm leading-relaxed text-ink-500">
               <p>配置保存在本地 SQLite，不进 git、不上传云端</p>
               <p>切换供应商/模型后，解析和推荐会立即使用新配置</p>
               <p>本地模型建议：Ollama（ollama pull glm4:9b）或 llama.cpp，两者都提供 OpenAI 兼容接口</p>
