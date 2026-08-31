@@ -289,7 +289,7 @@ export default function HomePage() {
 
                       {c.chip && (
                         <div className={`${c.chat || c.bars ? "mt-4" : "mt-auto pt-4"}`}>
-                          <div className="rounded-xl bg-ink-50 px-3 py-2 font-mono text-[12px] text-ink-500">
+                          <div className="rounded-xl border border-ink-100/70 bg-ink-50/80 px-3 py-2 font-mono text-[12px] text-ink-500">
                             {c.chip}
                           </div>
                         </div>

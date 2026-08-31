@@ -8,7 +8,6 @@ import {
   Home,
   MessageSquareText,
   ShieldCheck,
-  SlidersHorizontal,
   Sparkles,
   Thermometer,
   Watch,
@@ -96,7 +95,7 @@ export default function InputBox({
           <div className="loading-bar-track">
             <div className="loading-bar-fill" style={{ width: barWidth }} />
           </div>
-          <div className="mt-1.5 flex justify-between text-xs text-ink-400">
+          <div className="mt-1.5 flex justify-between font-mono text-xs text-ink-400">
             <span>步骤 {Math.min(loadingIdx + 1, 4)}/4</span>
             <span>预计 3 秒</span>
           </div>
@@ -105,17 +104,17 @@ export default function InputBox({
         <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="rounded-2xl border border-ink-100 bg-white p-4">
-              <div className="skeleton mb-2 h-3 w-16 rounded" />
-              <div className="skeleton h-5 w-24 rounded" />
+              <div className="skeleton mb-2 h-3 w-16 rounded-full" />
+              <div className="skeleton h-5 w-24 rounded-full" />
             </div>
           ))}
         </div>
         <div className="rounded-2xl border border-ink-100 bg-white p-6">
-          <div className="skeleton mb-4 h-4 w-40 rounded" />
+          <div className="skeleton mb-4 h-4 w-40 rounded-full" />
           <div className="space-y-3">
-            <div className="skeleton h-3 w-full rounded" />
-            <div className="skeleton h-3 w-3/4 rounded" />
-            <div className="skeleton h-3 w-5/6 rounded" />
+            <div className="skeleton h-3 w-full rounded-full" />
+            <div className="skeleton h-3 w-3/4 rounded-full" />
+            <div className="skeleton h-3 w-5/6 rounded-full" />
           </div>
         </div>
       </div>
@@ -123,24 +122,26 @@ export default function InputBox({
   }
 
   return (
-    <div className="volt-card mx-auto max-w-3xl overflow-hidden !rounded-[26px] shadow-[0_34px_80px_rgba(15,31,61,.18)]">
-      <div className="p-6">
-        <div className="mb-3 flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm font-semibold text-ink-800">
-            <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand-50 text-brand-600">
-              <MessageSquareText className="h-4 w-4" />
-            </span>
-            项目需求描述
-          </label>
-          <span className="hidden items-center gap-1.5 font-mono text-[11px] text-success-600 sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-success-500" />
-            本地解析
+    <div className="volt-card mx-auto max-w-3xl overflow-hidden shadow-[0_34px_80px_rgba(15,31,61,.18)]">
+      {/* 头部 */}
+      <div className="flex items-center justify-between border-b border-ink-100 bg-gradient-to-r from-brand-50/70 to-transparent px-6 py-4">
+        <label className="flex items-center gap-2.5 text-sm font-semibold text-ink-800">
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-brand-600 shadow-sm ring-1 ring-brand-100">
+            <MessageSquareText className="h-4 w-4" />
           </span>
-        </div>
+          项目需求描述
+        </label>
+        <span className="flex items-center gap-1.5 font-mono text-[11px] text-success-600">
+          <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-success-500" />
+          本地解析
+        </span>
+      </div>
+
+      <div className="px-6 pt-5">
         <textarea
           rows={4}
           maxLength={500}
-          className="scrollbar-thin w-full resize-none rounded-xl border border-ink-100 bg-ink-50/60 px-4 py-3 text-sm text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
+          className="scrollbar-thin w-full resize-none rounded-2xl border border-ink-100 bg-ink-50/50 px-4 py-3.5 text-sm leading-relaxed text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
           placeholder="例如：我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -152,48 +153,45 @@ export default function InputBox({
           }}
         />
         <div className="mt-1.5 flex items-center justify-between">
-          <span className="font-mono text-xs text-ink-300">Ctrl + Enter 快速提交</span>
-          <span className={`text-xs ${text.length > 450 ? "text-warning-600" : "text-ink-400"}`}>
+          <span className="font-mono text-[11px] text-ink-300">Ctrl + Enter 快速提交</span>
+          <span className={`font-mono text-[11px] ${text.length > 450 ? "text-warning-600" : "text-ink-400"}`}>
             {text.length} / 500
           </span>
         </div>
 
-        <div className="mt-3">
-          <div className="mb-2 flex items-center gap-1 text-xs text-ink-400">
-            <Sparkles className="h-3 w-3 text-brand-500" />
-            快速示例
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {EXAMPLES.map((ex) => (
-              <button
-                key={ex.short}
-                type="button"
-                onClick={() => setText(ex.text)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 transition-all hover:bg-brand-100"
-              >
-                <ex.Icon className="h-3 w-3" />
-                {ex.short}
-              </button>
-            ))}
-          </div>
+        {/* 快速示例 */}
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span className="mr-1 flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-300">
+            <Sparkles className="h-3 w-3 text-brand-400" />
+            示例
+          </span>
+          {EXAMPLES.map((ex) => (
+            <button
+              key={ex.short}
+              type="button"
+              onClick={() => setText(ex.text)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-brand-100/70 bg-brand-50/60 px-3 py-1.5 text-xs font-medium text-brand-700 transition-all hover:border-brand-300 hover:bg-brand-100/70 active:scale-[.97]"
+            >
+              <ex.Icon className="h-3 w-3" />
+              {ex.short}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="h-px bg-ink-100" />
-
-      <div className="bg-ink-50/70 p-6">
-        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-ink-600">
-          <SlidersHorizontal className="h-4 w-4 text-ink-400" />
-          补充参数
-          <span className="text-xs font-normal text-ink-400">可选，不填 AI 会自动推断</span>
+      {/* 补充参数：一体式分段参数条 */}
+      <div className="px-6 pt-5">
+        <div className="mb-2.5 flex items-center justify-between">
+          <span className="text-xs font-medium text-ink-500">补充参数</span>
+          <span className="text-[11px] text-ink-400">不填则 AI 自动推断</span>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 divide-ink-100 overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-sm md:grid-cols-4 md:divide-x md:divide-y-0">
           {selects.map((s) => (
-            <div key={s.label}>
-              <label className="mb-1.5 block text-xs text-ink-500">{s.label}</label>
-              <div className="relative">
+            <div key={s.label} className="group relative border-b border-ink-100 px-4 py-3 transition-colors hover:bg-brand-50/40 md:border-b-0">
+              <div className="text-[11px] font-medium text-ink-400">{s.label}</div>
+              <div className="relative mt-0.5">
                 <select
-                  className="w-full cursor-pointer appearance-none rounded-xl border border-ink-100 bg-white py-2 pl-3 pr-8 text-sm text-ink-700 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full cursor-pointer appearance-none bg-transparent pr-6 text-[13.5px] font-semibold text-ink-800 outline-none transition-colors group-hover:text-brand-700"
                   value={s.value}
                   onChange={(e) => s.set(e.target.value)}
                 >
@@ -201,17 +199,18 @@ export default function InputBox({
                     <option key={o}>{o}</option>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400" />
+                <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-300 transition-colors group-hover:text-brand-500" />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t border-ink-100 bg-white p-4">
+      {/* 底部操作区 */}
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 bg-gradient-to-r from-ink-50/80 to-white px-6 py-4">
         <div className="flex items-center gap-1.5 text-xs text-ink-400">
           <ShieldCheck className="h-3.5 w-3.5 text-success-500" />
-          数据来源：立创商城 · Datasheet
+          数据来源：立创商城 / 官方 Datasheet
         </div>
         <div className="flex items-center gap-2">
           <button

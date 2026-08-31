@@ -12,7 +12,7 @@
     position: relative;
     z-index: 1;
     min-height: 100dvh;
-    background: rgba(246, 249, 253, 0.84);
+    background: rgba(246, 249, 253, 0.8);
   }
 
   /* 落地页首屏需要透出背景照片，不叠浅色层 */
@@ -46,17 +46,29 @@
   pointer-events: none;
   background: url("/volt-bg.jpg") center / cover no-repeat;
   opacity: 1;
+  animation: voltDrift 22s ease-in-out infinite alternate;
   transition:
-    opacity 1.6s cubic-bezier(.22, 1, .36, 1),
-    transform 1.6s cubic-bezier(.22, 1, .36, 1),
-    filter 1.6s cubic-bezier(.22, 1, .36, 1);
+    opacity 1.4s cubic-bezier(.22, 1, .36, 1),
+    transform 1.4s cubic-bezier(.22, 1, .36, 1),
+    filter 1.4s cubic-bezier(.22, 1, .36, 1);
   will-change: opacity, transform, filter;
 }
 
 .volt-bg.engaged {
-  opacity: 0.42;
-  transform: scale(1.12);
+  animation: none;
+  opacity: 0.48;
+  transform: scale(1.16) translateY(-42px);
   filter: saturate(0.55) brightness(1.12);
+}
+
+/* 首屏照片缓慢呼吸式漂移，让「进入态」也有生命力 */
+@keyframes voltDrift {
+  from {
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1.1) translateY(-20px);
+  }
 }
 
 .volt-wash {
@@ -84,8 +96,9 @@
     border: 1px solid var(--volt-line, #e4eaf4);
     border-radius: 26px;
     box-shadow:
-      0 14px 40px rgba(15, 31, 61, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      0 1px 2px rgba(15, 31, 61, 0.04),
+      0 24px 48px -16px rgba(15, 31, 61, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
 
   .skeleton {
@@ -269,8 +282,8 @@
   }
 
   .filter-btn {
-    background: #fff;
-    border: 1px solid #c6d0de;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(198, 208, 222, 0.8);
     color: #5b6b85;
     transition:
       background 0.35s cubic-bezier(.22, .61, .36, 1),
@@ -281,9 +294,10 @@
     background: #f4f7fb;
   }
   .filter-btn.active {
-    background: #2f6bff;
-    border-color: #2f6bff;
+    background: linear-gradient(140deg, #4a80ff, #2f6bff);
+    border-color: rgba(47, 107, 255, 0.6);
     color: #fff;
+    box-shadow: 0 8px 18px rgba(47, 107, 255, 0.28);
   }
 
   .back-to-top {
@@ -403,6 +417,7 @@
   }
   .volt-bg,
   .volt-bg.engaged {
+    animation: none !important;
     transition: none;
   }
 }
