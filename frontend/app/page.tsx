@@ -128,6 +128,14 @@ export default function HomePage() {
     );
   }, [stage]);
 
+  // 从推荐页「修改需求」回来时，带 #engine 标记，直接进入输入需求阶段
+  useEffect(() => {
+    const wantsApp =
+      window.location.hash === "#engine" ||
+      new URLSearchParams(window.location.search).get("stage") === "app";
+    if (wantsApp) setStage("app");
+  }, []);
+
   function scrollToDetails() {
     introRef.current?.querySelector("#product-detail")?.scrollIntoView({ behavior: "smooth" });
   }
@@ -351,6 +359,19 @@ export default function HomePage() {
       >
         <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
           <div className="mx-auto max-w-3xl">
+            <div className="mb-6 flex justify-start">
+              <button
+                type="button"
+                onClick={() => {
+                  introRef.current?.scrollTo({ top: 0 });
+                  setStage("intro");
+                }}
+                className="btn-secondary !py-2 text-xs"
+              >
+                <ArrowRight className="h-3.5 w-3.5 rotate-180" />
+                返回首页
+              </button>
+            </div>
             <div className="mb-8 animate-slide-up text-center">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
                 <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />

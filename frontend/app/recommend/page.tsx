@@ -21,7 +21,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import BackToTop from "@/components/BackToTop";
-import BackButton from "@/components/BackButton";
 import ParamCard from "@/components/ParamCard";
 import RecommendCard from "@/components/RecommendCard";
 import SkeletonCards from "@/components/SkeletonCards";
@@ -207,9 +206,7 @@ export default function RecommendPage() {
       <TopBar current={currentStep} />
       <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-3xl">
-          {stage === "params" ? (
-            <BackButton label="返回首页" fallback="/" />
-          ) : (
+          {stage !== "params" && (
             <button
               type="button"
               onClick={() => {
@@ -320,7 +317,7 @@ export default function RecommendPage() {
             <div className="flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/#engine")}
                 className="btn-secondary text-sm"
               >
                 <ArrowLeft className="h-4 w-4" />
