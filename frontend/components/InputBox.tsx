@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Textarea } from "@/components/ui/textarea";
+
 const EXAMPLES: { text: string; short: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { short: "低功耗蓝牙温湿度传感器", text: "我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内", Icon: Thermometer },
   { short: "智能家居环境监测站", text: "做一个智能家居环境监测站，WiFi 连接上传数据到服务器，需要测温度湿度 PM2.5，USB 供电", Icon: Home },
@@ -137,7 +139,7 @@ export default function InputBox({
             本地解析
           </span>
         </div>
-        <textarea
+        <Textarea
           rows={4}
           maxLength={500}
           className="scrollbar-thin w-full resize-none rounded-xl border border-ink-100 bg-ink-50/60 px-4 py-3 text-sm text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"

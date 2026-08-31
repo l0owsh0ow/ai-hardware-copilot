@@ -16,6 +16,9 @@ import ParamCard from "@/components/ParamCard";
 import RecommendCard from "@/components/RecommendCard";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { clearHistory, deleteHistory, fetchHistoryDetail, fetchHistoryList } from "@/lib/api";
 import { showToast } from "@/lib/toast";
 import { CATEGORY_LABELS } from "@/lib/store";
@@ -87,14 +90,16 @@ export default function HistoryPage() {
 
           {detail ? (
             <>
-              <button
+              <Button
                 type="button"
                 onClick={() => setDetail(null)}
-                className="btn-secondary mb-4 !py-2 text-xs"
+                className="mb-4"
+                variant="outline"
+                size="sm"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 返回历史列表
-              </button>
+              </Button>
               <div className="mb-1 flex items-center gap-2">
                 <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
                   <Layers className="h-5 w-5 text-brand-600" />
@@ -150,59 +155,45 @@ export default function HistoryPage() {
               </p>
 
               <div className="mb-6 flex justify-end">
-                <button
+                <Button
                   type="button"
                   onClick={clearAll}
                   disabled={items.length === 0}
-                  className="btn-secondary !py-2 text-xs"
+                  variant="outline"
+                  size="sm"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   清空历史
-                </button>
+                </Button>
               </div>
 
               {loading ? (
                 <div className="space-y-3">
                   {[0, 1, 2].map((i) => (
-                    <div key={i} className="volt-card p-5">
+                    <div key={i} className="rounded-[26px] border border-ink-100 bg-white p-5 shadow-sm">
                       <div className="skeleton mb-2 h-4 w-32 rounded-full" />
                       <div className="skeleton h-3 w-3/4 rounded-full" />
                     </div>
                   ))}
                 </div>
               ) : items.length === 0 ? (
-                <div className="volt-card px-5 py-14 text-center">
+                <Card className="border-ink-100 px-5 py-14 text-center shadow-sm">
+                  <CardContent className="p-0">
                   <div className="mb-2 text-sm font-medium text-ink-700">还没有历史记录</div>
                   <p className="mb-4 text-xs text-ink-400">
                     去输入一次需求并生成推荐，系统会自动保存到这里
                   </p>
-                  <Link
-                    href="/"
-                    className="btn-primary"
-                  >
-                    <span>去选型</span>
-                    <span className="arr">
-                      <svg
-                        width="13"
-                        height="13"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M7 17 17 7M9 7h8v8" />
-                      </svg>
-                    </span>
-                  </Link>
-                </div>
+                  <Button asChild className="rounded-full px-5">
+                    <Link href="/">去选型</Link>
+                  </Button>
+                  </CardContent>
+                </Card>
               ) : (
                 <div className="space-y-3">
                   {items.map((it) => (
                     <div
                       key={it.id}
-                      className="card-hover volt-card flex items-center justify-between p-5"
+                      className="card-hover flex items-center justify-between rounded-[26px] border border-ink-100 bg-white p-5 shadow-sm"
                     >
                       <button
                         type="button"
@@ -211,9 +202,9 @@ export default function HistoryPage() {
                       >
                         <div className="mb-1 flex items-center gap-2">
                           <span className="text-sm font-semibold text-ink-900">{it.title}</span>
-                          <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
+                          <Badge variant="secondary" className="font-medium">
                             {it.count} 个元件
-                          </span>
+                          </Badge>
                         </div>
                         <div className="mb-1 line-clamp-1 text-xs text-ink-400">{it.query_text}</div>
                         <div className="flex items-center gap-1 text-xs text-ink-400">
@@ -222,22 +213,25 @@ export default function HistoryPage() {
                         </div>
                       </button>
                       <div className="ml-3 flex items-center gap-2">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => openDetail(it.id)}
-                          className="btn-secondary !py-1.5 text-xs"
+                          variant="outline"
+                          size="sm"
                         >
                           <FileText className="h-3 w-3" />
                           查看
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => remove(it.id)}
-                          className="inline-flex items-center gap-1 rounded-full p-2 text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                          className="text-ink-400 hover:bg-danger-50 hover:text-danger-600"
+                          variant="ghost"
+                          size="icon"
                           title="删除"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ))}

@@ -3,6 +3,34 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* shadcn/ui 语义令牌 → VOLT 电光蓝白绿 */
+    --background: 217 61% 98%;
+    --foreground: 222 47% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 15%;
+    --primary: 224 100% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 218 100% 96%;
+    --secondary-foreground: 224 72% 44%;
+    --muted: 220 50% 96%;
+    --muted-foreground: 220 22% 44%;
+    --accent: 218 100% 96%;
+    --accent-foreground: 224 72% 44%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 40% 92%;
+    --input: 220 40% 92%;
+    --ring: 224 100% 59%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
   body {
     @apply bg-ink-50 text-ink-900 antialiased;
     font-family: "Outfit", "Noto Sans SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;

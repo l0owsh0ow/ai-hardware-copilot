@@ -1,19 +1,29 @@
 "use client";
 
-import {
-  CheckCircle2,
-  KeyRound,
-  Loader2,
-  Save,
-  Server,
-  Settings2,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, KeyRound, Loader2, Save, Server, Settings2, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import BackToTop from "@/components/BackToTop";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { fetchLLMSettings, saveLLMSettings, testLLMConnection } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { showToast } from "@/lib/toast";
@@ -29,7 +39,7 @@ const PROVIDERS: { value: string; label: string; hint: string; needsKey: boolean
 ];
 
 const MODEL_PLACEHOLDERS: Record<string, string> = {
-  local: "qwen3:4b",
+  local: "glm4:9b",
   deepseek: "deepseek-chat",
   openai: "gpt-4o-mini",
   claude: "claude-sonnet-4-20250514",
@@ -115,118 +125,124 @@ export default function ProfilePage() {
           </p>
 
           {error && (
-            <div className="mb-4 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+            <div className="mb-4 rounded-2xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
               {error}
             </div>
           )}
 
-          <div className="volt-card p-6">
-            <div className="mb-5">
-              <label className="mb-1.5 block text-sm font-medium text-ink-700">LLM 供应商</label>
-              <select
-                className="w-full cursor-pointer rounded-xl border border-ink-100 bg-white px-3 py-2.5 text-sm text-ink-700 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
-                value={provider}
-                onChange={(e) => {
-                  setProvider(e.target.value);
-                  setModel(MODEL_PLACEHOLDERS[e.target.value] || "");
-                  setBaseUrl(e.target.value === "local" ? "http://localhost:11434/v1/chat/completions" : "");
-                }}
-              >
-                {PROVIDERS.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
-              {current && <p className="mt-1.5 text-xs text-ink-400">{current.hint}</p>}
-            </div>
+          <Card className="border-ink-100 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg">模型配置</CardTitle>
+              <CardDescription className="text-sm text-ink-500">
+                解析与推荐都会使用这里的设置，Key 只保存在本地数据库。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="provider" className="text-sm font-medium text-ink-700">
+                  LLM 供应商
+                </Label>
+                <Select
+                  value={provider}
+                  onValueChange={(v) => {
+                    setProvider(v);
+                    setModel(MODEL_PLACEHOLDERS[v] || "");
+                    setBaseUrl(v === "local" ? "http://localhost:11434/v1/chat/completions" : "");
+                  }}
+                >
+                  <SelectTrigger id="provider" className="w-full">
+                    <SelectValue placeholder="选择供应商" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROVIDERS.map((p) => (
+                      <SelectItem key={p.value} value={p.value}>
+                        {p.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {current && <p className="text-xs text-ink-400">{current.hint}</p>}
+              </div>
 
-            {current?.needsBase && (
-              <div className="mb-5">
-                <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-ink-700">
-                  <Server className="h-4 w-4 text-ink-400" />
-                  Base URL
-                </label>
-                <input
-                  className="w-full rounded-xl border border-ink-100 bg-ink-50/50 px-3 py-2.5 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                  placeholder="http://localhost:11434/v1/chat/completions"
-                  value={baseUrl}
-                  onChange={(e) => setBaseUrl(e.target.value)}
+              {current?.needsBase && (
+                <div className="space-y-2">
+                  <Label htmlFor="baseUrl" className="flex items-center gap-1.5 text-sm font-medium text-ink-700">
+                    <Server className="h-4 w-4 text-ink-400" />
+                    Base URL
+                  </Label>
+                  <Input
+                    id="baseUrl"
+                    className="bg-ink-50/50 focus:bg-white"
+                    placeholder="http://localhost:11434/v1/chat/completions"
+                    value={baseUrl}
+                    onChange={(e) => setBaseUrl(e.target.value)}
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="model" className="text-sm font-medium text-ink-700">
+                  模型名称
+                </Label>
+                <Input
+                  id="model"
+                  className="bg-ink-50/50 focus:bg-white"
+                  placeholder={MODEL_PLACEHOLDERS[provider] || "deepseek-chat"}
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
                 />
               </div>
-            )}
 
-            <div className="mb-5">
-              <label className="mb-1.5 block text-sm font-medium text-ink-700">模型名称</label>
-              <input
-                className="w-full rounded-xl border border-ink-100 bg-ink-50/50 px-3 py-2.5 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                placeholder={MODEL_PLACEHOLDERS[provider] || "deepseek-chat"}
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-              />
-            </div>
+              {current?.needsKey && (
+                <div className="space-y-2">
+                  <Label htmlFor="apiKey" className="flex items-center gap-1.5 text-sm font-medium text-ink-700">
+                    <KeyRound className="h-4 w-4 text-ink-400" />
+                    API Key
+                    {settings?.api_key_set && (
+                      <Badge variant="secondary" className="font-normal">
+                        已配置
+                      </Badge>
+                    )}
+                  </Label>
+                  <Input
+                    id="apiKey"
+                    type="password"
+                    className="bg-ink-50/50 focus:bg-white"
+                    placeholder={settings?.api_key_set ? "留空表示保留当前 Key" : "输入你的 API Key"}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                  <p className="text-xs text-ink-400">Key 只保存在本地数据库，不会显示和上传</p>
+                </div>
+              )}
 
-            {current?.needsKey && (
-              <div className="mb-5">
-                <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-ink-700">
-                  <KeyRound className="h-4 w-4 text-ink-400" />
-                  API Key
-                  {settings?.api_key_set && (
-                    <span className="rounded-full bg-success-50 px-2 py-0.5 text-xs font-normal text-success-700">
-                      已配置
-                    </span>
-                  )}
-                </label>
-                <input
-                  type="password"
-                  className="w-full rounded-xl border border-ink-100 bg-ink-50/50 px-3 py-2.5 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                  placeholder={settings?.api_key_set ? "留空表示保留当前 Key" : "输入你的 API Key"}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                />
-                <p className="mt-1.5 text-xs text-ink-400">Key 只保存在本地数据库，不会显示和上传</p>
+              <div className="flex items-center justify-between border-t border-ink-100 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleTest}
+                  disabled={testing || provider === "mock"}
+                  className="rounded-full"
+                >
+                  {testing ? <Loader2 className="animate-spin" /> : <Server />}
+                  测试连接
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="rounded-full px-5"
+                >
+                  {saving ? <Loader2 className="animate-spin" /> : <Save />}
+                  保存配置
+                </Button>
               </div>
-            )}
-
-            <div className="flex items-center justify-between border-t border-ink-100 pt-4">
-              <button
-                type="button"
-                onClick={handleTest}
-                disabled={testing || provider === "mock"}
-                className="btn-secondary text-sm"
-              >
-                {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Server className="h-4 w-4" />}
-                测试连接
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="btn-primary"
-              >
-                <span>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}</span>
-                <span>保存配置</span>
-                <span className="arr">
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M7 17 17 7M9 7h8v8" />
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {testResult && (
             <div
-              className={`mt-4 flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
+              className={`mt-4 flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm ${
                 testResult.ok
                   ? "border-success-100 bg-success-50 text-success-700"
                   : "border-danger-100 bg-danger-50 text-danger-700"
@@ -248,15 +264,17 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <div className="volt-card mt-6 p-5 text-xs leading-relaxed text-ink-500">
-            <div className="mb-2 text-sm font-medium text-ink-700">使用说明</div>
-            <ul className="list-disc space-y-1 pl-4">
-              <li>配置保存在本地 SQLite，不进 git、不上传云端</li>
-              <li>切换供应商/模型后，解析和推荐会立即使用新配置</li>
-              <li>本地模型建议：Ollama（ollama pull qwen3:4b）或 llama.cpp，两者都提供 OpenAI 兼容接口</li>
-              <li>不想用大模型时可切回"规则模式"，免费且离线可用</li>
-            </ul>
-          </div>
+          <Card className="mt-6 border-ink-100 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-sm">使用说明</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1.5 text-xs leading-relaxed text-ink-500">
+              <p>配置保存在本地 SQLite，不进 git、不上传云端</p>
+              <p>切换供应商/模型后，解析和推荐会立即使用新配置</p>
+              <p>本地模型建议：Ollama（ollama pull glm4:9b）或 llama.cpp，两者都提供 OpenAI 兼容接口</p>
+              <p>不想用大模型时可切回「规则模式」，免费且离线可用</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
       <ToastHost />

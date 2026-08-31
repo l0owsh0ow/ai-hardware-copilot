@@ -1,21 +1,44 @@
 "use client";
 
-import {
-  BarChart3,
-  Database,
-  Loader2,
-  Pencil,
-  Plus,
-  RefreshCw,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react";
+import { BarChart3, Database, Loader2, Pencil, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import BackToTop from "@/components/BackToTop";
 import ToastHost from "@/components/ToastHost";
 import TopBar from "@/components/TopBar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import {
   addAdminComponent,
   deleteAdminComponent,
@@ -147,6 +170,26 @@ export default function AdminPage() {
     }
   }
 
+  function openEdit(r: Row) {
+    setEditId(r.id);
+    setForm({
+      part_number: String(r.part_number || ""),
+      category: String(r.category || ""),
+      subcategory: String(r.subcategory || ""),
+      manufacturer: String(r.manufacturer || ""),
+      description: String(r.description || ""),
+      package: String(r.package || ""),
+      price_cny: String(r.price_cny ?? ""),
+      price_unit: String(r.price_unit || "个"),
+      stock_status: String(r.stock_status || ""),
+      datasheet_url: String(r.datasheet_url || ""),
+      supplier: String(r.supplier || ""),
+      supplier_url: String(r.supplier_url || ""),
+      tags: Array.isArray(r.tags) ? (r.tags as string[]).join(",") : "",
+    });
+    setShowForm(true);
+  }
+
   const funnelLabels: [string, string][] = [
     ["parse_success", "解析成功"],
     ["recommend_success", "推荐成功"],
@@ -169,7 +212,7 @@ export default function AdminPage() {
           <p className="mb-6 ml-10 text-sm text-ink-500">元器件管理 / 数据看板 / 索引维护</p>
 
           {error && (
-            <div className="mb-4 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+            <div className="mb-4 rounded-2xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
               {error}
             </div>
           )}
@@ -199,10 +242,10 @@ export default function AdminPage() {
           {tab === "kb" ? (
             <>
               <div className="mb-4 flex flex-wrap items-center gap-2">
-                <div className="relative flex-1 min-w-48">
+                <div className="relative min-w-48 flex-1">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
-                  <input
-                    className="w-full rounded-full border border-ink-100 bg-white py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                  <Input
+                    className="bg-white pl-9"
                     placeholder="搜索型号 / 描述 / 标签"
                     value={q}
                     onChange={(e) => {
@@ -211,116 +254,101 @@ export default function AdminPage() {
                     }}
                   />
                 </div>
-                <select
-                  className="rounded-full border border-ink-100 bg-white px-3 py-2 text-sm outline-none"
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
+                <Select
+                  value={category || "all"}
+                  onValueChange={(v) => {
+                    setCategory(v === "all" ? "" : v);
                     setPage(1);
                   }}
                 >
-                  <option value="">全部分类</option>
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                <button
+                  <SelectTrigger className="w-32 bg-white">
+                    <SelectValue placeholder="全部分类" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">全部分类</SelectItem>
+                    {CATEGORIES.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
                   type="button"
                   onClick={() => {
                     setEditId(null);
                     setForm(EMPTY_FORM);
                     setShowForm(true);
                   }}
-                  className="btn-primary"
+                  className="rounded-full px-4"
                 >
-                  <span>新增元器件</span>
-                  <span className="arr">
-                    <Plus className="h-4 w-4" />
-                  </span>
-                </button>
-                <button
+                  <Plus />
+                  新增元器件
+                </Button>
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={handleRebuild}
                   disabled={rebuilding}
-                  className="btn-secondary text-sm"
+                  className="rounded-full"
                 >
-                  {rebuilding ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  {rebuilding ? <Loader2 className="animate-spin" /> : <RefreshCw />}
                   重建索引
-                </button>
+                </Button>
               </div>
 
               {loading ? (
                 <div className="space-y-2">
                   {[0, 1, 2].map((i) => (
-                    <div key={i} className="skeleton h-12 rounded-lg" />
+                    <div key={i} className="skeleton h-12 rounded-2xl" />
                   ))}
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-[24px] border border-ink-100 bg-white shadow-lg">
-                  <table className="w-full">
-                    <thead className="bg-brand-50/70">
-                      <tr className="text-left font-mono text-xs text-ink-500">
-                        <th className="px-4 py-3">型号</th>
-                        <th className="px-4 py-3">分类</th>
-                        <th className="px-4 py-3">厂商</th>
-                        <th className="px-4 py-3 text-right">价格</th>
-                        <th className="px-4 py-3">库存</th>
-                        <th className="px-4 py-3 text-right">操作</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-ink-100">
+                <Card className="overflow-hidden border-ink-100 shadow-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-brand-50/70 hover:bg-brand-50/70">
+                        <TableHead className="font-mono text-xs">型号</TableHead>
+                        <TableHead className="font-mono text-xs">分类</TableHead>
+                        <TableHead className="font-mono text-xs">厂商</TableHead>
+                        <TableHead className="text-right font-mono text-xs">价格</TableHead>
+                        <TableHead className="font-mono text-xs">库存</TableHead>
+                        <TableHead className="text-right font-mono text-xs">操作</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                       {rows.map((r) => (
-                        <tr key={r.id} className="transition-colors hover:bg-brand-50/30">
-                          <td className="px-4 py-3 text-sm font-semibold text-ink-800">{r.part_number}</td>
-                          <td className="px-4 py-3 text-sm text-ink-600">{r.category}</td>
-                          <td className="px-4 py-3 text-sm text-ink-600">{r.manufacturer}</td>
-                          <td className="px-4 py-3 text-right font-mono text-sm">¥{Number(r.price_cny).toFixed(2)}</td>
-                          <td className="px-4 py-3 text-sm text-ink-600">{r.stock_status}</td>
-                          <td className="px-4 py-3">
+                        <TableRow key={r.id} className="transition-colors hover:bg-brand-50/30">
+                          <TableCell className="font-mono text-sm font-semibold text-ink-800">
+                            {r.part_number}
+                          </TableCell>
+                          <TableCell className="text-sm text-ink-600">{r.category}</TableCell>
+                          <TableCell className="text-sm text-ink-600">{r.manufacturer}</TableCell>
+                          <TableCell className="text-right font-mono text-sm">
+                            ¥{Number(r.price_cny).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-sm text-ink-600">{r.stock_status}</TableCell>
+                          <TableCell>
                             <div className="flex justify-end gap-1">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setEditId(r.id);
-                                  setForm({
-                                    part_number: String(r.part_number || ""),
-                                    category: String(r.category || ""),
-                                    subcategory: String(r.subcategory || ""),
-                                    manufacturer: String(r.manufacturer || ""),
-                                    description: String(r.description || ""),
-                                    package: String(r.package || ""),
-                                    price_cny: String(r.price_cny ?? ""),
-                                    price_unit: String(r.price_unit || "个"),
-                                    stock_status: String(r.stock_status || ""),
-                                    datasheet_url: String(r.datasheet_url || ""),
-                                    supplier: String(r.supplier || ""),
-                                    supplier_url: String(r.supplier_url || ""),
-                                    tags: Array.isArray(r.tags) ? (r.tags as string[]).join(",") : "",
-                                  });
-                                  setShowForm(true);
-                                }}
-                                className="rounded-full p-2 text-ink-400 hover:bg-brand-50 hover:text-brand-600"
-                                title="编辑"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </button>
-                              <button
-                                type="button"
+                              <Button variant="ghost" size="icon" onClick={() => openEdit(r)} title="编辑">
+                                <Pencil />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 onClick={() => handleDelete(r.id, String(r.part_number))}
-                                className="rounded-full p-2 text-ink-400 hover:bg-danger-50 hover:text-danger-600"
                                 title="删除"
+                                className="text-ink-400 hover:text-danger-600"
                               >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                                <Trash2 />
+                              </Button>
                             </div>
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                    </TableBody>
+                  </Table>
+                </Card>
               )}
 
               <div className="mt-4 flex items-center justify-between text-xs text-ink-500">
@@ -328,49 +356,52 @@ export default function AdminPage() {
                   共 {total} 条 · 第 {page} 页
                 </span>
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
                     disabled={page <= 1}
                     onClick={() => setPage((p) => p - 1)}
-                    className="rounded-full border border-ink-100 px-3.5 py-1.5 hover:bg-ink-50 disabled:opacity-40"
                   >
                     上一页
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
                     disabled={page * 20 >= total}
                     onClick={() => setPage((p) => p + 1)}
-                    className="rounded-full border border-ink-100 px-3.5 py-1.5 hover:bg-ink-50 disabled:opacity-40"
                   >
                     下一页
-                  </button>
+                  </Button>
                 </div>
               </div>
             </>
           ) : (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                <div className="volt-card p-4">
-                  <div className="text-xs text-ink-400">总事件数</div>
-                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.total ?? "-"}</div>
-                </div>
-                <div className="volt-card p-4">
-                  <div className="text-xs text-ink-400">今日事件</div>
-                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.today ?? "-"}</div>
-                </div>
-                <div className="volt-card p-4">
-                  <div className="text-xs text-ink-400">页面访问</div>
-                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.funnel?.page_view ?? "-"}</div>
-                </div>
-                <div className="volt-card p-4">
-                  <div className="text-xs text-ink-400">BOM 导出</div>
-                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.funnel?.bom_export ?? "-"}</div>
-                </div>
+                {[
+                  ["总事件数", summary?.total],
+                  ["今日事件", summary?.today],
+                  ["页面访问", summary?.funnel?.page_view],
+                  ["BOM 导出", summary?.funnel?.bom_export],
+                ].map(([label, value]) => (
+                  <Card key={label as string} className="border-ink-100 shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="text-xs text-ink-400">{label}</div>
+                      <div className="mt-1 font-mono text-2xl font-medium text-ink-900">
+                        {value ?? "-"}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
 
-              <div className="volt-card p-5">
-                <div className="mb-4 text-sm font-semibold text-ink-800">核心漏斗</div>
-                <div className="space-y-3">
+              <Card className="border-ink-100 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-sm">核心漏斗</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
                   {funnelLabels.map(([ev, label]) => {
                     const count = summary?.funnel?.[ev] ?? 0;
                     const max = Math.max(...funnelLabels.map(([e]) => summary?.funnel?.[e] ?? 0), 1);
@@ -381,115 +412,92 @@ export default function AdminPage() {
                           <span className="font-semibold text-ink-700">{count}</span>
                         </div>
                         <div className="h-2 overflow-hidden rounded-full bg-ink-100">
-                          <div className="h-full rounded-full bg-brand-500" style={{ width: `${(count / max) * 100}%` }} />
+                          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-400" style={{ width: `${(count / max) * 100}%` }} />
                         </div>
                       </div>
                     );
                   })}
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              <div className="volt-card p-5">
-                <div className="mb-3 text-sm font-semibold text-ink-800">最近事件</div>
-                <div className="space-y-1.5">
+              <Card className="border-ink-100 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-sm">最近事件</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-1.5">
                   {(summary?.recent ?? []).map((e, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg bg-ink-50/50 px-3 py-2 text-xs">
+                    <div key={i} className="flex items-center justify-between rounded-xl bg-ink-50/70 px-3 py-2 text-xs">
                       <span className="font-medium text-ink-700">{e.event}</span>
-                      <span className="text-ink-400">
-                        {e.session_id.slice(0, 12)} · {e.created_at}
+                      <span className="font-mono text-ink-400">
+                        {e.session_id.slice(0, 12)} / {e.created_at}
                       </span>
                     </div>
                   ))}
                   {summary && summary.recent.length === 0 && (
                     <div className="py-6 text-center text-sm text-ink-400">还没有事件，去使用一下产品吧</div>
                   )}
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
           )}
         </div>
       </div>
 
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#081226]/55 p-4">
-          <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-[26px] bg-white p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-ink-900">{editId ? "编辑元器件" : "新增元器件"}</h2>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-full p-2 text-ink-400 hover:bg-ink-100">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {(
-                [
-                  ["part_number", "型号 *", "text"],
-                  ["category", "分类", "text"],
-                  ["subcategory", "子分类", "text"],
-                  ["manufacturer", "厂商", "text"],
-                  ["package", "封装", "text"],
-                  ["price_cny", "价格(元)", "number"],
-                  ["price_unit", "价格单位", "text"],
-                  ["stock_status", "库存状态", "text"],
-                  ["datasheet_url", "Datasheet 链接", "text"],
-                  ["supplier", "供应商", "text"],
-                  ["supplier_url", "采购链接", "text"],
-                  ["tags", "标签(逗号分隔)", "text"],
-                ] as [string, string, string][]
-              ).map(([key, label, type]) => (
-                <div key={key} className={key === "datasheet_url" || key === "supplier_url" ? "col-span-2" : ""}>
-                  <label className="mb-1 block text-xs text-ink-500">{label}</label>
-                  <input
-                    type={type}
-                    className="w-full rounded-xl border border-ink-100 bg-ink-50/40 px-3 py-2 text-sm outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                    value={form[key] ?? ""}
-                    onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                  />
-                </div>
-              ))}
-              <div className="col-span-2">
-                <label className="mb-1 block text-xs text-ink-500">中文描述（影响检索质量）</label>
-                <textarea
-                  className="w-full rounded-xl border border-ink-100 bg-ink-50/40 px-3 py-2 text-sm outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
-                  rows={3}
-                  value={form.description ?? ""}
-                  onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>{editId ? "编辑元器件" : "新增元器件"}</DialogTitle>
+            <DialogDescription>
+              中文描述会直接影响向量检索质量，请尽量写清楚。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-3">
+            {(
+              [
+                ["part_number", "型号 *", "text"],
+                ["category", "分类", "text"],
+                ["subcategory", "子分类", "text"],
+                ["manufacturer", "厂商", "text"],
+                ["package", "封装", "text"],
+                ["price_cny", "价格(元)", "number"],
+                ["price_unit", "价格单位", "text"],
+                ["stock_status", "库存状态", "text"],
+                ["datasheet_url", "Datasheet 链接", "text"],
+                ["supplier", "供应商", "text"],
+                ["supplier_url", "采购链接", "text"],
+                ["tags", "标签(逗号分隔)", "text"],
+              ] as [string, string, string][]
+            ).map(([key, label, type]) => (
+              <div key={key} className={key === "datasheet_url" || key === "supplier_url" ? "col-span-2" : ""}>
+                <label className="mb-1 block text-xs text-ink-500">{label}</label>
+                <Input
+                  type={type}
+                  className="bg-ink-50/40 focus:bg-white"
+                  value={form[key] ?? ""}
+                  onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                 />
               </div>
-            </div>
-            <div className="mt-5 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="btn-secondary text-sm"
-              >
-                取消
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={!form.part_number.trim()}
-                className="btn-primary"
-              >
-                <span>保存</span>
-                <span className="arr">
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M7 17 17 7M9 7h8v8" />
-                  </svg>
-                </span>
-              </button>
+            ))}
+            <div className="col-span-2">
+              <label className="mb-1 block text-xs text-ink-500">中文描述（影响检索质量）</label>
+              <Textarea
+                className="bg-ink-50/40 focus:bg-white"
+                rows={3}
+                value={form.description ?? ""}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              />
             </div>
           </div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="rounded-full">
+              取消
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={!form.part_number.trim()} className="rounded-full px-5">
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <ToastHost />
       <BackToTop />
     </main>
