@@ -96,7 +96,7 @@ export default function HistoryPage() {
                 返回历史列表
               </button>
               <div className="mb-1 flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
+                <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
                   <Layers className="h-5 w-5 text-brand-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-ink-900">{detail.title}</h1>
@@ -140,7 +140,7 @@ export default function HistoryPage() {
           ) : (
             <>
               <div className="mb-1 flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
+                <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
                   <History className="h-5 w-5 text-brand-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-ink-900">历史方案</h1>

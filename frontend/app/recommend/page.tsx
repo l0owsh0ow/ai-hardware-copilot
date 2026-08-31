@@ -220,7 +220,7 @@ export default function RecommendPage() {
             </button>
           )}
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success-50">
+            <div className="volt-aurora green flex h-8 w-8 items-center justify-center rounded-xl">
               <Check className="h-5 w-5 text-success-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">AI 解析完成</h1>
@@ -347,7 +347,7 @@ export default function RecommendPage() {
         {stage === "recs" && !loading && (
           <div className="mx-auto max-w-4xl">
             <div className="mt-8 mb-1 flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
+              <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
                 <Layers className="h-5 w-5 text-brand-600" />
               </div>
               <h1 className="text-2xl font-bold text-ink-900">元器件推荐结果</h1>

@@ -161,7 +161,7 @@ export default function AdminPage() {
       <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-4xl">
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
+            <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
               <Database className="h-5 w-5 text-brand-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">管理后台</h1>

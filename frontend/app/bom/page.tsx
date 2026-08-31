@@ -73,7 +73,7 @@ export default function BomPage() {
         <div className="mx-auto max-w-4xl">
           <BackButton label="返回推荐结果" fallback="/recommend" />
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
+            <div className="volt-aurora flex h-8 w-8 items-center justify-center rounded-xl">
               <FileSpreadsheet className="h-5 w-5 text-brand-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">BOM 物料清单</h1>
@@ -99,7 +99,7 @@ export default function BomPage() {
 
           <div className="volt-card mb-4 p-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-success-50">
+              <div className="volt-aurora green flex h-7 w-7 items-center justify-center rounded-xl">
                 <Brain className="h-4 w-4 text-success-600" />
               </div>
               <span className="text-sm font-semibold text-ink-800">AI 方案概要</span>
