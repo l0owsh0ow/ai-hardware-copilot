@@ -18,7 +18,13 @@ import { useState } from "react";
 const STEP_ICONS = [PenLine, ListChecks, Layers, FileSpreadsheet];
 const STEP_LABELS = ["输入需求", "参数确认", "元件推荐", "BOM导出"];
 
-export default function TopBar({ current }: { current: number }) {
+export default function TopBar({
+  current,
+  onStart,
+}: {
+  current: number;
+  onStart?: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -113,27 +119,51 @@ export default function TopBar({ current }: { current: number }) {
 
             <div className="mx-1 h-5 w-px bg-ink-200" />
 
-            <Link
-              href="/#engine"
-              onClick={() => setOpen(false)}
-              className="btn-primary hidden sm:inline-flex"
-            >
-              <span>开始选型</span>
-              <span className="arr">
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M7 17 17 7M9 7h8v8" />
-                </svg>
-              </span>
-            </Link>
+            {onStart ? (
+              <button
+                type="button"
+                onClick={onStart}
+                className="btn-primary hidden sm:inline-flex"
+              >
+                <span>开始选型</span>
+                <span className="arr">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </span>
+              </button>
+            ) : (
+              <Link
+                href="/#engine"
+                onClick={() => setOpen(false)}
+                className="btn-primary hidden sm:inline-flex"
+              >
+                <span>开始选型</span>
+                <span className="arr">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </span>
+              </Link>
+            )}
 
             <button
               type="button"
@@ -148,9 +178,22 @@ export default function TopBar({ current }: { current: number }) {
       </div>
 
       <div className={`volt-menu ${open ? "open" : ""}`}>
-        <Link href="/" onClick={() => setOpen(false)}>
-          开始选型
-        </Link>
+        {onStart ? (
+          <button
+            type="button"
+            onClick={() => {
+              onStart();
+              setOpen(false);
+            }}
+            className="cursor-pointer"
+          >
+            开始选型
+          </button>
+        ) : (
+          <Link href="/" onClick={() => setOpen(false)}>
+            开始选型
+          </Link>
+        )}
         <Link href="/history" onClick={() => setOpen(false)}>
           历史方案
         </Link>

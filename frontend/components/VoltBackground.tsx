@@ -20,6 +20,12 @@ export default function VoltBackground() {
       return;
     }
     setEngaged(false);
+    // 首页由页面自身控制（点击「开始选型」后隐入背景）
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ engaged: boolean }>).detail;
+      setEngaged(detail.engaged);
+    };
+    window.addEventListener("hc-bg-engage", handler);
     const el = sentinelRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -29,7 +35,10 @@ export default function VoltBackground() {
       { threshold: 0.1 }
     );
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      window.removeEventListener("hc-bg-engage", handler);
+    };
   }, [pathname]);
 
   return (
