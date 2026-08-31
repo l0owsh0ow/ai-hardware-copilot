@@ -287,7 +287,7 @@ export default function RecommendPage() {
             />
           </div>
 
-          <div className="mb-6 rounded-2xl border border-brand-100/80 bg-brand-50/60 p-5">
+          <div className="mb-6 rounded-2xl border border-brand-100 bg-brand-50/70 p-5">
             <div className="mb-3 flex items-center gap-2">
               <Brain className="h-4 w-4 text-brand-600" />
               <span className="text-sm font-semibold text-brand-900">AI 分析：需要以下 {counts.size || 4} 类元器件</span>
