@@ -359,28 +359,28 @@ export default function HomePage() {
       >
         <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
           <div className="mx-auto max-w-3xl">
-            <div className="mb-5 mt-4 flex justify-start">
+            <div className="relative mb-8">
               <button
                 type="button"
                 onClick={() => {
                   introRef.current?.scrollTo({ top: 0 });
                   setStage("intro");
                 }}
-                className="btn-secondary !py-2 text-xs"
+                className="btn-secondary absolute -left-2 top-4 !py-2 text-xs"
               >
                 <ArrowRight className="h-3.5 w-3.5 rotate-180" />
                 返回首页
               </button>
-            </div>
-            <div className="mb-8 animate-slide-up text-center">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
-                <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />
-                AI 驱动 · 已收录 100+ 元器件
+              <div className="animate-slide-up text-center">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+                  <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />
+                  AI 驱动 · 已收录 100+ 元器件
+                </div>
+                <h1 className="mb-3 text-3xl font-bold tracking-tight text-ink-900 md:text-4xl">
+                  描述你的硬件项目需求
+                </h1>
+                <p className="text-base text-ink-500">用自然语言描述，AI 自动提取参数并推荐元器件方案</p>
               </div>
-              <h1 className="mb-3 text-3xl font-bold tracking-tight text-ink-900 md:text-4xl">
-                描述你的硬件项目需求
-              </h1>
-              <p className="text-base text-ink-500">用自然语言描述，AI 自动提取参数并推荐元器件方案</p>
             </div>
 
             {error && (
