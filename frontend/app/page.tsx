@@ -336,7 +336,7 @@ export default function HomePage() {
                   <p className="mx-auto mt-3 max-w-[44ch] text-[15px] text-[#e4ecff]">
                     描述你的第一个项目，AI 会给出完整的元器件方案。
                   </p>
-                  <button type="button" onClick={startApp} className="btn-primary mt-8 border-white bg-white !text-brand-600 shadow-[0_16px_40px_rgba(0,0,0,.2)] hover:shadow-[0_16px_40px_rgba(0,0,0,.3)]">
+                  <button type="button" onClick={startApp} className="btn-primary mt-8">
                     <span>开始选型</span>
                     <span className="arr bg-success-500 !text-white">
                       <ArrowRight className="h-4 w-4" />
