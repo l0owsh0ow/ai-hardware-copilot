@@ -166,7 +166,7 @@ export default function AdminPage() {
             </div>
             <h1 className="text-2xl font-bold text-ink-900">管理后台</h1>
           </div>
-          <p className="mb-6 ml-10 text-sm text-ink-500">元器件管理 · 数据看板 · 索引维护</p>
+          <p className="mb-6 ml-10 text-sm text-ink-500">元器件管理 / 数据看板 / 索引维护</p>
 
           {error && (
             <div className="mb-4 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">

@@ -240,7 +240,7 @@ export default function ProfilePage() {
               <div>
                 <div className="font-medium">
                   {testResult.ok
-                    ? `连接成功 · 延迟 ${testResult.latency_ms}ms · 模型 ${testResult.model || "未知"}`
+                    ? `连接成功，延迟 ${testResult.latency_ms}ms，模型 ${testResult.model || "未知"}`
                     : "连接失败"}
                 </div>
                 {!testResult.ok && <div className="mt-1 text-xs opacity-80">{testResult.error}</div>}

@@ -183,6 +183,14 @@ export default function RecommendPage() {
     return map;
   }, [recommendations]);
 
+  // 置信度取推荐结果的真实平均匹配度，不写死
+  const confidence = useMemo(() => {
+    if (recommendations.length === 0) return null;
+    return Math.round(
+      (recommendations.reduce((sum, r) => sum + r.match_score, 0) / recommendations.length) * 100
+    );
+  }, [recommendations]);
+
   if (!params) {
     return (
       <main>
@@ -251,7 +259,7 @@ export default function RecommendPage() {
             )}
             <div className="inline-flex items-center gap-1.5 rounded-full border border-success-100 bg-success-50 px-3.5 py-1.5 text-xs text-success-700">
               <ShieldCheck className="h-3.5 w-3.5" />
-              置信度 95%
+              置信度 {confidence ? `${confidence}%` : "高"}
             </div>
           </div>
 
