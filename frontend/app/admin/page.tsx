@@ -158,10 +158,10 @@ export default function AdminPage() {
   return (
     <main>
       <TopBar current={0} />
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-4xl">
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
               <Database className="h-5 w-5 text-brand-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">管理后台</h1>
@@ -183,10 +183,10 @@ export default function AdminPage() {
                 key={value as string}
                 type="button"
                 onClick={() => setTab(value as "kb" | "analytics")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all ${
                   tab === value
-                    ? "bg-brand-600 text-white"
-                    : "border border-ink-200 bg-white text-ink-600 hover:bg-ink-50"
+                    ? "bg-brand-600 text-white shadow-[0_8px_18px_rgba(47,107,255,.32)]"
+                    : "border border-ink-100 bg-white text-ink-600 hover:bg-ink-50"
                 }`}
               >
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -202,7 +202,7 @@ export default function AdminPage() {
                 <div className="relative flex-1 min-w-48">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
                   <input
-                    className="w-full rounded-lg border border-ink-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-brand-500"
+                    className="w-full rounded-full border border-ink-100 bg-white py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
                     placeholder="搜索型号 / 描述 / 标签"
                     value={q}
                     onChange={(e) => {
@@ -212,7 +212,7 @@ export default function AdminPage() {
                   />
                 </div>
                 <select
-                  className="rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm outline-none"
+                  className="rounded-full border border-ink-100 bg-white px-3 py-2 text-sm outline-none"
                   value={category}
                   onChange={(e) => {
                     setCategory(e.target.value);
@@ -233,16 +233,18 @@ export default function AdminPage() {
                     setForm(EMPTY_FORM);
                     setShowForm(true);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+                  className="btn-primary"
                 >
-                  <Plus className="h-4 w-4" />
-                  新增元器件
+                  <span>新增元器件</span>
+                  <span className="arr">
+                    <Plus className="h-4 w-4" />
+                  </span>
                 </button>
                 <button
                   type="button"
                   onClick={handleRebuild}
                   disabled={rebuilding}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-4 py-2 text-sm font-medium text-ink-600 hover:bg-ink-50 disabled:opacity-50"
+                  className="btn-secondary text-sm"
                 >
                   {rebuilding ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                   重建索引
@@ -256,10 +258,10 @@ export default function AdminPage() {
                   ))}
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-ink-200 bg-white shadow-sm">
+                <div className="overflow-x-auto rounded-[24px] border border-ink-100 bg-white shadow-lg">
                   <table className="w-full">
-                    <thead className="bg-ink-50">
-                      <tr className="text-left text-xs text-ink-500">
+                    <thead className="bg-brand-50/70">
+                      <tr className="text-left font-mono text-xs text-ink-500">
                         <th className="px-4 py-3">型号</th>
                         <th className="px-4 py-3">分类</th>
                         <th className="px-4 py-3">厂商</th>
@@ -270,11 +272,11 @@ export default function AdminPage() {
                     </thead>
                     <tbody className="divide-y divide-ink-100">
                       {rows.map((r) => (
-                        <tr key={r.id} className="hover:bg-ink-50/50">
+                        <tr key={r.id} className="transition-colors hover:bg-brand-50/30">
                           <td className="px-4 py-3 text-sm font-semibold text-ink-800">{r.part_number}</td>
                           <td className="px-4 py-3 text-sm text-ink-600">{r.category}</td>
                           <td className="px-4 py-3 text-sm text-ink-600">{r.manufacturer}</td>
-                          <td className="px-4 py-3 text-right text-sm">¥{Number(r.price_cny).toFixed(2)}</td>
+                          <td className="px-4 py-3 text-right font-mono text-sm">¥{Number(r.price_cny).toFixed(2)}</td>
                           <td className="px-4 py-3 text-sm text-ink-600">{r.stock_status}</td>
                           <td className="px-4 py-3">
                             <div className="flex justify-end gap-1">
@@ -299,7 +301,7 @@ export default function AdminPage() {
                                   });
                                   setShowForm(true);
                                 }}
-                                className="rounded-lg p-1.5 text-ink-400 hover:bg-brand-50 hover:text-brand-600"
+                                className="rounded-full p-2 text-ink-400 hover:bg-brand-50 hover:text-brand-600"
                                 title="编辑"
                               >
                                 <Pencil className="h-4 w-4" />
@@ -307,7 +309,7 @@ export default function AdminPage() {
                               <button
                                 type="button"
                                 onClick={() => handleDelete(r.id, String(r.part_number))}
-                                className="rounded-lg p-1.5 text-ink-400 hover:bg-danger-50 hover:text-danger-600"
+                                className="rounded-full p-2 text-ink-400 hover:bg-danger-50 hover:text-danger-600"
                                 title="删除"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -330,7 +332,7 @@ export default function AdminPage() {
                     type="button"
                     disabled={page <= 1}
                     onClick={() => setPage((p) => p - 1)}
-                    className="rounded-lg border border-ink-200 px-3 py-1.5 hover:bg-ink-50 disabled:opacity-40"
+                    className="rounded-full border border-ink-100 px-3.5 py-1.5 hover:bg-ink-50 disabled:opacity-40"
                   >
                     上一页
                   </button>
@@ -338,7 +340,7 @@ export default function AdminPage() {
                     type="button"
                     disabled={page * 20 >= total}
                     onClick={() => setPage((p) => p + 1)}
-                    className="rounded-lg border border-ink-200 px-3 py-1.5 hover:bg-ink-50 disabled:opacity-40"
+                    className="rounded-full border border-ink-100 px-3.5 py-1.5 hover:bg-ink-50 disabled:opacity-40"
                   >
                     下一页
                   </button>
@@ -348,25 +350,25 @@ export default function AdminPage() {
           ) : (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                <div className="rounded-2xl border border-ink-200 bg-white p-4 shadow-sm">
+                <div className="volt-card p-4">
                   <div className="text-xs text-ink-400">总事件数</div>
-                  <div className="mt-1 text-2xl font-bold text-ink-900">{summary?.total ?? "-"}</div>
+                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.total ?? "-"}</div>
                 </div>
-                <div className="rounded-2xl border border-ink-200 bg-white p-4 shadow-sm">
+                <div className="volt-card p-4">
                   <div className="text-xs text-ink-400">今日事件</div>
-                  <div className="mt-1 text-2xl font-bold text-ink-900">{summary?.today ?? "-"}</div>
+                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.today ?? "-"}</div>
                 </div>
-                <div className="rounded-2xl border border-ink-200 bg-white p-4 shadow-sm">
+                <div className="volt-card p-4">
                   <div className="text-xs text-ink-400">页面访问</div>
-                  <div className="mt-1 text-2xl font-bold text-ink-900">{summary?.funnel?.page_view ?? "-"}</div>
+                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.funnel?.page_view ?? "-"}</div>
                 </div>
-                <div className="rounded-2xl border border-ink-200 bg-white p-4 shadow-sm">
+                <div className="volt-card p-4">
                   <div className="text-xs text-ink-400">BOM 导出</div>
-                  <div className="mt-1 text-2xl font-bold text-ink-900">{summary?.funnel?.bom_export ?? "-"}</div>
+                  <div className="mt-1 font-mono text-2xl font-medium text-ink-900">{summary?.funnel?.bom_export ?? "-"}</div>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-ink-200 bg-white p-5 shadow-sm">
+              <div className="volt-card p-5">
                 <div className="mb-4 text-sm font-semibold text-ink-800">核心漏斗</div>
                 <div className="space-y-3">
                   {funnelLabels.map(([ev, label]) => {
@@ -387,7 +389,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-ink-200 bg-white p-5 shadow-sm">
+              <div className="volt-card p-5">
                 <div className="mb-3 text-sm font-semibold text-ink-800">最近事件</div>
                 <div className="space-y-1.5">
                   {(summary?.recent ?? []).map((e, i) => (
@@ -409,11 +411,11 @@ export default function AdminPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/40 p-4">
-          <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#081226]/55 p-4">
+          <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-[26px] bg-white p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-ink-900">{editId ? "编辑元器件" : "新增元器件"}</h2>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100">
+              <button type="button" onClick={() => setShowForm(false)} className="rounded-full p-2 text-ink-400 hover:bg-ink-100">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -438,7 +440,7 @@ export default function AdminPage() {
                   <label className="mb-1 block text-xs text-ink-500">{label}</label>
                   <input
                     type={type}
-                    className="w-full rounded-lg border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-ink-100 bg-ink-50/40 px-3 py-2 text-sm outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
                     value={form[key] ?? ""}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                   />
@@ -447,7 +449,7 @@ export default function AdminPage() {
               <div className="col-span-2">
                 <label className="mb-1 block text-xs text-ink-500">中文描述（影响检索质量）</label>
                 <textarea
-                  className="w-full rounded-lg border border-ink-200 px-3 py-2 text-sm outline-none focus:border-brand-500"
+                  className="w-full rounded-xl border border-ink-100 bg-ink-50/40 px-3 py-2 text-sm outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
                   rows={3}
                   value={form.description ?? ""}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
@@ -458,7 +460,7 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="rounded-lg border border-ink-200 px-4 py-2 text-sm text-ink-600 hover:bg-ink-50"
+                className="btn-secondary text-sm"
               >
                 取消
               </button>
@@ -466,9 +468,23 @@ export default function AdminPage() {
                 type="button"
                 onClick={handleSave}
                 disabled={!form.part_number.trim()}
-                className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+                className="btn-primary"
               >
-                保存
+                <span>保存</span>
+                <span className="arr">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </span>
               </button>
             </div>
           </div>

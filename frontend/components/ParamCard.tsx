@@ -36,7 +36,7 @@ export default function ParamCard({
 }) {
   const Icon = ICONS[name];
   return (
-    <div className="card-hover rounded-xl border border-ink-200 bg-white p-4">
+    <div className="card-hover rounded-2xl border border-ink-100 bg-white p-4 shadow-sm">
       <div className="mb-2 flex items-center gap-1.5 text-xs text-ink-400">
         {Icon && <Icon className="h-3 w-3" />}
         {name}
@@ -44,15 +44,15 @@ export default function ParamCard({
       {editable ? (
         <div className="flex items-center gap-1">
           <input
-            className="w-full border-none bg-transparent text-sm font-semibold text-ink-800 outline-none"
+            className="w-full border-none bg-transparent font-mono text-sm font-medium text-ink-800 outline-none"
             value={value}
             onChange={(e) => onChange?.(e.target.value)}
           />
           <Pencil className="h-3 w-3 shrink-0 cursor-pointer text-brand-500 hover:text-brand-700" />
         </div>
       ) : (
-        <div className="flex items-center gap-1 text-sm font-semibold text-ink-800">
-          {value || "—"}
+        <div className="flex items-center gap-1 font-mono text-sm font-medium text-ink-800">
+          {value || "未填写"}
           {onChange && <Pencil className="h-3 w-3 cursor-pointer text-brand-500 hover:text-brand-700" />}
         </div>
       )}

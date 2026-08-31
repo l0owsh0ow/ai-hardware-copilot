@@ -187,7 +187,7 @@ export default function RecommendPage() {
     return (
       <main>
         <TopBar current={2} />
-        <div className="mx-auto max-w-6xl px-6 py-8 text-center text-sm text-ink-500">加载中...</div>
+        <div className="mx-auto max-w-6xl px-6 pt-28 text-center text-sm text-ink-500">加载中...</div>
       </main>
     );
   }
@@ -197,7 +197,7 @@ export default function RecommendPage() {
   return (
     <main>
       <TopBar current={currentStep} />
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-3xl">
           {stage === "params" ? (
             <BackButton label="返回首页" fallback="/" />
@@ -208,14 +208,14 @@ export default function RecommendPage() {
                 setStage("params");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="mb-4 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-100"
+              className="btn-secondary mb-4 !py-2 text-xs"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               返回参数确认
             </button>
           )}
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success-50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success-50">
               <Check className="h-5 w-5 text-success-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">AI 解析完成</h1>
@@ -235,21 +235,21 @@ export default function RecommendPage() {
           )}
 
           <div className="mb-6 flex flex-wrap gap-2">
-            <div className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-xs text-ink-600">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-ink-100 bg-white px-3.5 py-1.5 text-xs text-ink-600 shadow-sm">
               <Layers className="h-3.5 w-3.5 text-brand-500" />
               识别到 <b className="mx-0.5 text-brand-600">{counts.size || 4}</b> 个元器件需求
             </div>
-            <div className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-xs text-ink-600">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-ink-100 bg-white px-3.5 py-1.5 text-xs text-ink-600 shadow-sm">
               <Timer className="h-3.5 w-3.5 text-brand-500" />
               预计 <b className="mx-0.5 text-brand-600">3</b> 分钟完成选型
             </div>
             {params.budget && (
-              <div className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-xs text-ink-600">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-ink-100 bg-white px-3.5 py-1.5 text-xs text-ink-600 shadow-sm">
                 <Wallet className="h-3.5 w-3.5 text-brand-500" />
                 预算 <b className="mx-0.5 text-brand-600">{params.budget.replace(/元以内/g, "")}</b> 元以内
               </div>
             )}
-            <div className="inline-flex items-center gap-1.5 rounded-lg border border-success-100 bg-success-50 px-3 py-1.5 text-xs text-success-700">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-success-100 bg-success-50 px-3.5 py-1.5 text-xs text-success-700">
               <ShieldCheck className="h-3.5 w-3.5" />
               置信度 95%
             </div>
@@ -279,12 +279,12 @@ export default function RecommendPage() {
             />
           </div>
 
-          <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50 p-5">
+          <div className="mb-6 rounded-2xl border border-brand-100 bg-brand-50/70 p-5">
             <div className="mb-3 flex items-center gap-2">
-              <Brain className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-semibold text-blue-900">AI 分析：需要以下 {counts.size || 4} 类元器件</span>
+              <Brain className="h-4 w-4 text-brand-600" />
+              <span className="text-sm font-semibold text-brand-900">AI 分析：需要以下 {counts.size || 4} 类元器件</span>
             </div>
-            <div className="space-y-2 text-sm text-blue-700">
+            <div className="space-y-2 text-sm text-brand-800">
               {(params.communication.includes("蓝牙") || params.communication.includes("BLE") ? [
                 ["MCU", "低功耗蓝牙主控芯片，需支持 BLE 协议栈"],
                 ["传感器", "与场景匹配的采集传感器"],
@@ -297,11 +297,11 @@ export default function RecommendPage() {
                 ["通信", "按需选配（如 MCU 已集成则不需要单独模块）"],
               ]).map(([name, desc], i) => (
                 <div key={name} className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-blue-200 text-xs font-bold text-blue-800">
+                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand-200 text-xs font-bold text-brand-800">
                     {i + 1}
                   </span>
                   <span>
-                    <b>{name}</b> — {desc}
+                    <b>{name}</b>：{desc}
                   </span>
                 </div>
               ))}
@@ -313,7 +313,7 @@ export default function RecommendPage() {
               <button
                 type="button"
                 onClick={() => router.push("/")}
-                className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-100"
+                className="btn-secondary text-sm"
               >
                 <ArrowLeft className="h-4 w-4" />
                 修改需求
@@ -322,10 +322,12 @@ export default function RecommendPage() {
                 type="button"
                 onClick={handleRecommend}
                 disabled={loading}
-                className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-700 disabled:opacity-60"
+                className="btn-primary"
               >
-                确认参数，开始推荐
-                <ArrowRight className="h-4 w-4" />
+                <span>确认参数，开始推荐</span>
+                <span className="arr">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
               </button>
             </div>
           )}
@@ -340,7 +342,7 @@ export default function RecommendPage() {
         {stage === "recs" && !loading && (
           <div className="mx-auto max-w-4xl">
             <div className="mt-8 mb-1 flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
                 <Layers className="h-5 w-5 text-brand-600" />
               </div>
               <h1 className="text-2xl font-bold text-ink-900">元器件推荐结果</h1>
@@ -362,7 +364,7 @@ export default function RecommendPage() {
                   <button
                     type="button"
                     onClick={() => setFilter("all")}
-                    className={`filter-btn whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === "all" ? "active" : ""}`}
+                    className={`filter-btn whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${filter === "all" ? "active" : ""}`}
                   >
                     全部 {recommendations.length}
                   </button>
@@ -371,7 +373,7 @@ export default function RecommendPage() {
                       key={cat}
                       type="button"
                       onClick={() => setFilter(cat)}
-                      className={`filter-btn whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === cat ? "active" : ""}`}
+                      className={`filter-btn whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${filter === cat ? "active" : ""}`}
                     >
                       {CATEGORY_LABELS[cat] || cat} {n}
                     </button>
@@ -380,7 +382,7 @@ export default function RecommendPage() {
                   <button
                     type="button"
                     onClick={() => setSortAsc((v) => !v)}
-                    className="inline-flex items-center gap-1 whitespace-nowrap rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-50"
+                    className="btn-secondary !py-1.5 text-xs"
                   >
                     <ArrowUpDown className="h-3 w-3" />
                     {sortAsc ? "匹配度 低→高" : "匹配度 高→低"}
@@ -392,7 +394,7 @@ export default function RecommendPage() {
                   return (
                     <div key={cat} className="mb-6">
                       <div className="mb-3 flex items-center gap-2">
-                        <SectionIcon className="h-4 w-4 text-ink-500" />
+                        <SectionIcon className="h-4 w-4 text-brand-500" />
                         <h2 className="text-sm font-semibold text-ink-700">{CATEGORY_LABELS[cat] || cat}</h2>
                         <span className="text-xs text-ink-400">推荐 {recs.length} 个</span>
                       </div>
@@ -414,7 +416,7 @@ export default function RecommendPage() {
                   <button
                     type="button"
                     onClick={() => setStage("params")}
-                    className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-100"
+                    className="btn-secondary text-sm"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     修改参数
@@ -423,7 +425,7 @@ export default function RecommendPage() {
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50"
+                      className="btn-secondary text-sm"
                     >
                       <ListPlus className="h-4 w-4" />
                       {selected.size === recommendations.length && recommendations.length > 0
@@ -434,11 +436,10 @@ export default function RecommendPage() {
                       type="button"
                       onClick={handleGenerateBom}
                       disabled={loading}
-                      className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-brand-700 disabled:opacity-60"
+                      className="btn-primary"
                     >
-                      <FileSpreadsheet className="h-4 w-4" />
-                      生成 BOM 表
-                      <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-xs">
+                      <span>生成 BOM 表</span>
+                      <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 font-mono text-xs">
                         {selected.size}
                       </span>
                     </button>

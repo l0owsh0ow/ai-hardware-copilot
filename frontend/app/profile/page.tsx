@@ -102,10 +102,10 @@ export default function ProfilePage() {
   return (
     <main>
       <TopBar current={0} />
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-2xl">
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
               <Settings2 className="h-5 w-5 text-brand-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">个人主页 · AI 配置</h1>
@@ -120,11 +120,11 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <div className="rounded-2xl border border-ink-200 bg-white p-6 shadow-sm">
+          <div className="volt-card p-6">
             <div className="mb-5">
               <label className="mb-1.5 block text-sm font-medium text-ink-700">LLM 供应商</label>
               <select
-                className="w-full cursor-pointer rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-700 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                className="w-full cursor-pointer rounded-xl border border-ink-100 bg-white px-3 py-2.5 text-sm text-ink-700 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
                 value={provider}
                 onChange={(e) => {
                   setProvider(e.target.value);
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                   Base URL
                 </label>
                 <input
-                  className="w-full rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full rounded-xl border border-ink-100 bg-ink-50/50 px-3 py-2.5 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
                   placeholder="http://localhost:11434/v1/chat/completions"
                   value={baseUrl}
                   onChange={(e) => setBaseUrl(e.target.value)}
@@ -159,7 +159,7 @@ export default function ProfilePage() {
             <div className="mb-5">
               <label className="mb-1.5 block text-sm font-medium text-ink-700">模型名称</label>
               <input
-                className="w-full rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                className="w-full rounded-xl border border-ink-100 bg-ink-50/50 px-3 py-2.5 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
                 placeholder={MODEL_PLACEHOLDERS[provider] || "deepseek-chat"}
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
@@ -179,7 +179,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="password"
-                  className="w-full rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full rounded-xl border border-ink-100 bg-ink-50/50 px-3 py-2.5 text-sm text-ink-800 outline-none transition-all focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
                   placeholder={settings?.api_key_set ? "留空表示保留当前 Key" : "输入你的 API Key"}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
@@ -193,7 +193,7 @@ export default function ProfilePage() {
                 type="button"
                 onClick={handleTest}
                 disabled={testing || provider === "mock"}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50 disabled:opacity-40"
+                className="btn-secondary text-sm"
               >
                 {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Server className="h-4 w-4" />}
                 测试连接
@@ -202,10 +202,24 @@ export default function ProfilePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-brand-700 disabled:opacity-60"
+                className="btn-primary"
               >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                保存配置
+                <span>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}</span>
+                <span>保存配置</span>
+                <span className="arr">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </span>
               </button>
             </div>
           </div>
@@ -234,7 +248,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <div className="mt-6 rounded-xl border border-ink-200 bg-white p-5 text-xs leading-relaxed text-ink-500 shadow-sm">
+          <div className="volt-card mt-6 p-5 text-xs leading-relaxed text-ink-500">
             <div className="mb-2 text-sm font-medium text-ink-700">使用说明</div>
             <ul className="list-disc space-y-1 pl-4">
               <li>配置保存在本地 SQLite，不进 git、不上传云端</li>

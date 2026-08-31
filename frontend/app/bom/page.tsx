@@ -61,7 +61,7 @@ export default function BomPage() {
     return (
       <main>
         <TopBar current={4} />
-        <div className="mx-auto max-w-6xl px-6 py-8 text-center text-sm text-ink-500">加载中...</div>
+        <div className="mx-auto max-w-6xl px-6 pt-28 text-center text-sm text-ink-500">加载中...</div>
       </main>
     );
   }
@@ -69,11 +69,11 @@ export default function BomPage() {
   return (
     <main>
       <TopBar current={4} />
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-4xl">
           <BackButton label="返回推荐结果" fallback="/recommend" />
           <div className="mb-1 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
               <FileSpreadsheet className="h-5 w-5 text-brand-600" />
             </div>
             <h1 className="text-2xl font-bold text-ink-900">BOM 物料清单</h1>
@@ -86,7 +86,7 @@ export default function BomPage() {
             onQtyChange={(part, qty) => setQuantities((prev) => ({ ...prev, [part]: qty }))}
           />
 
-          <div className="mb-4 flex items-center justify-between rounded-2xl border border-brand-100 bg-gradient-to-r from-brand-50 to-brand-100/50 p-5">
+          <div className="mb-4 flex items-center justify-between rounded-[24px] border border-brand-100 bg-gradient-to-r from-brand-50 to-brand-100/60 p-5 shadow-sm">
             <div>
               <div className="text-sm font-medium text-brand-700">BOM 总成本</div>
               <div className="mt-0.5 flex items-center gap-1 text-xs text-ink-400">
@@ -94,12 +94,12 @@ export default function BomPage() {
                 价格仅供参考，以实际采购为准
               </div>
             </div>
-            <div className="text-3xl font-bold text-ink-900">¥{total.toFixed(2)}</div>
+            <div className="font-mono text-3xl font-medium text-ink-900">¥{total.toFixed(2)}</div>
           </div>
 
-          <div className="mb-4 rounded-2xl border border-ink-200 bg-white p-5 shadow-sm">
+          <div className="volt-card mb-4 p-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-success-50">
+              <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-success-50">
                 <Brain className="h-4 w-4 text-success-600" />
               </div>
               <span className="text-sm font-semibold text-ink-800">AI 方案概要</span>
@@ -147,7 +147,7 @@ export default function BomPage() {
             <button
               type="button"
               onClick={() => router.push("/recommend")}
-              className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-100"
+              className="btn-secondary text-sm"
             >
               <ArrowLeft className="h-4 w-4" />
               重新选型
@@ -156,7 +156,7 @@ export default function BomPage() {
               <button
                 type="button"
                 onClick={() => showToast("方案已保存（MVP 暂未开通账号系统）", "success")}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-4 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50"
+                className="btn-secondary text-sm"
               >
                 <Bookmark className="h-4 w-4" />
                 保存方案
@@ -164,7 +164,7 @@ export default function BomPage() {
               <button
                 type="button"
                 onClick={() => handleExport("excel")}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:bg-ink-50"
+                className="btn-secondary text-sm"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 导出 Excel
@@ -172,10 +172,12 @@ export default function BomPage() {
               <button
                 type="button"
                 onClick={() => handleExport("csv")}
-                className="btn-primary inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-brand-700"
+                className="btn-primary"
               >
-                <Download className="h-4 w-4" />
-                导出 CSV
+                <span>导出 CSV</span>
+                <span className="arr">
+                  <Download className="h-4 w-4" />
+                </span>
               </button>
             </div>
           </div>

@@ -14,7 +14,7 @@ interface Toast {
 const STYLES: Record<ToastType, string> = {
   success: "bg-success-600",
   error: "bg-danger-600",
-  info: "bg-ink-800",
+  info: "bg-ink-900",
 };
 
 const ICONS: Record<ToastType, React.ReactNode> = {
@@ -45,7 +45,7 @@ export default function ToastHost() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`toast pointer-events-auto inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-white shadow-lg ${STYLES[t.type]}`}
+          className={`toast pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white shadow-lg ${STYLES[t.type]}`}
         >
           {ICONS[t.type]}
           {t.msg}

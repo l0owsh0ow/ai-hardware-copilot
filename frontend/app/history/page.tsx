@@ -77,7 +77,7 @@ export default function HistoryPage() {
   return (
     <main>
       <TopBar current={0} />
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-3xl">
           {error && (
             <div className="mb-4 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
@@ -90,13 +90,13 @@ export default function HistoryPage() {
               <button
                 type="button"
                 onClick={() => setDetail(null)}
-                className="mb-4 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-100"
+                className="btn-secondary mb-4 !py-2 text-xs"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 返回历史列表
               </button>
               <div className="mb-1 flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
                   <Layers className="h-5 w-5 text-brand-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-ink-900">{detail.title}</h1>
@@ -132,7 +132,7 @@ export default function HistoryPage() {
                 ))}
               </div>
               {detail.recommendations.length === 0 && (
-                <div className="rounded-xl border border-ink-200 bg-white px-5 py-10 text-center text-sm text-ink-500">
+                <div className="volt-card px-5 py-10 text-center text-sm text-ink-500">
                   该记录没有保存推荐结果
                 </div>
               )}
@@ -140,7 +140,7 @@ export default function HistoryPage() {
           ) : (
             <>
               <div className="mb-1 flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-50">
                   <History className="h-5 w-5 text-brand-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-ink-900">历史方案</h1>
@@ -154,7 +154,7 @@ export default function HistoryPage() {
                   type="button"
                   onClick={clearAll}
                   disabled={items.length === 0}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-50 disabled:opacity-40"
+                  className="btn-secondary !py-2 text-xs"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   清空历史
@@ -164,23 +164,37 @@ export default function HistoryPage() {
               {loading ? (
                 <div className="space-y-3">
                   {[0, 1, 2].map((i) => (
-                    <div key={i} className="rounded-xl border border-ink-200 bg-white p-5 shadow-sm">
-                      <div className="skeleton mb-2 h-4 w-32 rounded" />
-                      <div className="skeleton h-3 w-3/4 rounded" />
+                    <div key={i} className="volt-card p-5">
+                      <div className="skeleton mb-2 h-4 w-32 rounded-full" />
+                      <div className="skeleton h-3 w-3/4 rounded-full" />
                     </div>
                   ))}
                 </div>
               ) : items.length === 0 ? (
-                <div className="rounded-xl border border-ink-200 bg-white px-5 py-14 text-center">
+                <div className="volt-card px-5 py-14 text-center">
                   <div className="mb-2 text-sm font-medium text-ink-700">还没有历史记录</div>
                   <p className="mb-4 text-xs text-ink-400">
                     去输入一次需求并生成推荐，系统会自动保存到这里
                   </p>
                   <Link
                     href="/"
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-brand-700"
+                    className="btn-primary"
                   >
-                    去选型
+                    <span>去选型</span>
+                    <span className="arr">
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M7 17 17 7M9 7h8v8" />
+                      </svg>
+                    </span>
                   </Link>
                 </div>
               ) : (
@@ -188,7 +202,7 @@ export default function HistoryPage() {
                   {items.map((it) => (
                     <div
                       key={it.id}
-                      className="card-hover flex items-center justify-between rounded-xl border border-ink-200 bg-white p-5 shadow-sm"
+                      className="card-hover volt-card flex items-center justify-between p-5"
                     >
                       <button
                         type="button"
@@ -197,7 +211,7 @@ export default function HistoryPage() {
                       >
                         <div className="mb-1 flex items-center gap-2">
                           <span className="text-sm font-semibold text-ink-900">{it.title}</span>
-                          <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs text-brand-700">
+                          <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
                             {it.count} 个元件
                           </span>
                         </div>
@@ -211,7 +225,7 @@ export default function HistoryPage() {
                         <button
                           type="button"
                           onClick={() => openDetail(it.id)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-brand-200 px-3 py-1.5 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50"
+                          className="btn-secondary !py-1.5 text-xs"
                         >
                           <FileText className="h-3 w-3" />
                           查看
@@ -219,7 +233,7 @@ export default function HistoryPage() {
                         <button
                           type="button"
                           onClick={() => remove(it.id)}
-                          className="inline-flex items-center gap-1 rounded-lg p-1.5 text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                          className="inline-flex items-center gap-1 rounded-full p-2 text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-600"
                           title="删除"
                         >
                           <Trash2 className="h-4 w-4" />

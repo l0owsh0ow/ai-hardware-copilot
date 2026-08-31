@@ -15,7 +15,7 @@ export default function BackButton({
     <button
       type="button"
       onClick={() => (window.history.length > 1 ? router.back() : router.push(fallback))}
-      className="mb-4 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-100"
+      className="btn-secondary mb-4 !py-2 text-xs"
     >
       <ArrowLeft className="h-3.5 w-3.5" />
       {label}

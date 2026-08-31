@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import "@fontsource/outfit/400.css";
+import "@fontsource/outfit/500.css";
+import "@fontsource/outfit/600.css";
+import "@fontsource/outfit/700.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import PageViewTracker from "@/components/PageViewTracker";
+import VoltBackground from "@/components/VoltBackground";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="zh-CN">
       <body>
+        <VoltBackground />
         <PageViewTracker />
         {children}
       </body>
