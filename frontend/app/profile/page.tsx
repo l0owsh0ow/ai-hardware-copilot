@@ -130,7 +130,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <Card className="border-ink-100 shadow-lg [--card-spacing:--spacing(6)]">
+          <Card className="rounded-[24px] border-ink-100 shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl">模型配置</CardTitle>
               <CardDescription className="text-sm leading-relaxed text-ink-500">
@@ -266,7 +266,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <Card className="mt-6 border-ink-100 shadow-sm [--card-spacing:--spacing(6)]">
+          <Card className="mt-6 rounded-[24px] border-ink-100 shadow-sm">
             <CardHeader>
               <CardTitle className="text-base">使用说明</CardTitle>
             </CardHeader>
