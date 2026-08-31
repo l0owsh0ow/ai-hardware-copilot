@@ -316,6 +316,65 @@
     }
   }
 
+  /* 功能色块：极光波动效（两层柔光色团缓慢漂移，形成波浪） */
+  .volt-aurora {
+    --a1: rgba(47, 107, 255, 0.55);
+    --a2: rgba(94, 141, 255, 0.4);
+    --a3: rgba(18, 183, 106, 0.3);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(155deg, rgba(234, 241, 255, 0.95), rgba(255, 255, 255, 0.92));
+  }
+  .volt-aurora.green {
+    --a1: rgba(18, 183, 106, 0.52);
+    --a2: rgba(53, 200, 128, 0.4);
+    --a3: rgba(47, 107, 255, 0.22);
+    background: linear-gradient(155deg, rgba(226, 247, 236, 0.96), rgba(255, 255, 255, 0.92));
+  }
+  .volt-aurora.amber {
+    --a1: rgba(245, 158, 11, 0.5);
+    --a2: rgba(251, 191, 36, 0.38);
+    --a3: rgba(255, 255, 255, 0.32);
+    background: linear-gradient(155deg, rgba(255, 251, 235, 0.96), rgba(255, 255, 255, 0.92));
+  }
+  .volt-aurora.neutral {
+    --a1: rgba(90, 110, 145, 0.36);
+    --a2: rgba(154, 168, 189, 0.32);
+    --a3: rgba(47, 107, 255, 0.2);
+    background: linear-gradient(155deg, rgba(244, 247, 251, 0.96), rgba(255, 255, 255, 0.92));
+  }
+  .volt-aurora::before,
+  .volt-aurora::after {
+    content: "";
+    position: absolute;
+    inset: -45%;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(42% 58% at 28% 32%, var(--a1), transparent 62%),
+      radial-gradient(38% 50% at 72% 68%, var(--a2), transparent 64%),
+      radial-gradient(32% 44% at 52% 88%, var(--a3), transparent 66%);
+    filter: blur(10px);
+    animation: voltAuroraWave 9s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .volt-aurora::after {
+    animation-duration: 12s;
+    animation-delay: -5s;
+  }
+  @keyframes voltAuroraWave {
+    0% {
+      transform: translate3d(-5%, -4%, 0) rotate(-3deg) scale(1);
+    }
+    50% {
+      transform: translate3d(6%, 5%, 0) rotate(4deg) scale(1.18);
+    }
+    100% {
+      transform: translate3d(-4%, 7%, 0) rotate(-2deg) scale(1.08);
+    }
+  }
+
   .badge-pulse {
     animation: pulseSoft 2s infinite ease-in-out;
   }

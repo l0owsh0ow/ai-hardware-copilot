@@ -34,19 +34,19 @@ const PAINS = [
     Icon: SearchX,
     title: "信息过载",
     desc: "参数表格几十列，型号成千上万，看完还是不知道买哪个。",
-    tint: "bg-gradient-to-br from-brand-50 to-brand-100/60 text-brand-600 ring-1 ring-brand-100/70",
+    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
   },
   {
     Icon: Wallet,
     title: "预算错配",
     desc: "照着教程买，要么性能过剩白花钱，要么关键参数不匹配。",
-    tint: "bg-gradient-to-br from-success-50 to-success-100/50 text-success-600 ring-1 ring-success-100/70",
+    tint: "volt-aurora green text-success-600 ring-1 ring-success-100/70",
   },
   {
     Icon: AlertTriangle,
     title: "怕被坑",
     desc: "型号水太深，停产、假货、封装对不上，踩坑成本太高。",
-    tint: "bg-gradient-to-br from-amber-50 to-amber-100/40 text-amber-600 ring-1 ring-amber-100/70",
+    tint: "volt-aurora amber text-amber-600 ring-1 ring-amber-100/70",
   },
 ];
 
@@ -55,7 +55,7 @@ const CAPABILITIES = [
     Icon: MessagesSquare,
     title: "一句话需求 → 结构化参数",
     desc: "自动识别用途、供电、功耗、通信和预算，不用填表。",
-    tint: "bg-gradient-to-br from-brand-50 to-brand-100/60 text-brand-600 ring-1 ring-brand-100/70",
+    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
     chip: "供电、通信、接口、预算",
     wide: true,
     chat: true,
@@ -64,7 +64,7 @@ const CAPABILITIES = [
     Icon: Wallet,
     title: "预算平替",
     desc: "在预算内找参数接近的替代型号，不盲目追贵。",
-    tint: "bg-gradient-to-br from-success-50 to-success-100/50 text-success-600 ring-1 ring-success-100/70",
+    tint: "volt-aurora green text-success-600 ring-1 ring-success-100/70",
     chip: "预算内 · 高性价比",
     wide: false,
   },
@@ -72,7 +72,7 @@ const CAPABILITIES = [
     Icon: ShieldCheck,
     title: "兼容性体检",
     desc: "供电、接口、电平自动核对，避免买回来装不上。",
-    tint: "bg-gradient-to-br from-ink-50 to-ink-100/70 text-ink-600 ring-1 ring-ink-100/80",
+    tint: "volt-aurora neutral text-ink-600 ring-1 ring-ink-100/80",
     chip: "接口、电平、供电",
     wide: false,
   },
@@ -80,7 +80,7 @@ const CAPABILITIES = [
     Icon: SlidersHorizontal,
     title: "性能可视化",
     desc: "功耗、频率、精度逐项量化，选型不靠猜。",
-    tint: "bg-gradient-to-br from-brand-50 to-brand-100/60 text-brand-600 ring-1 ring-brand-100/70",
+    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
     chip: "工作电压、待机电流、精度",
     wide: false,
     bars: [72, 88, 64, 96, 80],
@@ -89,7 +89,7 @@ const CAPABILITIES = [
     Icon: FileText,
     title: "Datasheet 溯源",
     desc: "每个推荐都带官方数据手册链接，可自行核验。",
-    tint: "bg-gradient-to-br from-brand-50 to-brand-100/60 text-brand-600 ring-1 ring-brand-100/70",
+    tint: "volt-aurora text-brand-600 ring-1 ring-brand-100/70",
     chip: "datasheet → 立创商城",
     wide: false,
   },
@@ -97,7 +97,7 @@ const CAPABILITIES = [
     Icon: Lock,
     title: "本地优先，数据不出机",
     desc: "历史记录存本地数据库，查看不消耗 token；可配 DeepSeek / OpenAI / 本地 Ollama，也能完全离线规则模式。",
-    tint: "bg-gradient-to-br from-success-50 to-success-100/50 text-success-600 ring-1 ring-success-100/70",
+    tint: "volt-aurora green text-success-600 ring-1 ring-success-100/70",
     chip: "localhost / SQLite / BYOK",
     wide: true,
   },
@@ -317,7 +317,7 @@ export default function HomePage() {
               {STEPS.map((s) => (
                 <Reveal key={s.title}>
                   <div className="volt-card flex h-full items-start gap-4 p-6">
-                    <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-brand-50 text-brand-600">
+                    <span className="volt-aurora grid h-10 w-10 flex-none place-items-center rounded-full text-brand-600">
                       <s.Icon className="h-4 w-4" />
                     </span>
                     <div>
