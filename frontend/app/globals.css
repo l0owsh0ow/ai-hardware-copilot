@@ -40,6 +40,11 @@
     @apply border-border;
   }
 
+  /* 全站像素统一：圆角一律归零，避免出现非像素的圆润色块 */
+  * {
+    border-radius: 0 !important;
+  }
+
   body {
     @apply bg-ink-50 text-ink-900 antialiased;
     font-family: "Cubic 11", "Outfit", "Noto Sans SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
@@ -826,7 +831,6 @@
     grid-template-rows: repeat(14, 1fr);
   }
   .block-trans .px-cell {
-    background: #f4f7fb;
     box-shadow: inset 0 0 0 1px rgba(10, 27, 77, 0.1);
   }
   .block-trans.breaking .px-cell {
@@ -836,12 +840,104 @@
   @keyframes pixelDissolve {
     0% {
       opacity: 1;
-      transform: translate(0, 0) scale(1);
+      transform: translate(0, 0) scale(1) rotate(0);
+    }
+    35% {
+      transform: translate(var(--px), 0) scale(0.96) rotate(4deg);
+    }
+    65% {
+      transform: translate(var(--px), var(--py)) scale(0.9) rotate(10deg);
     }
     100% {
       opacity: 0;
-      transform: translate(var(--dx), var(--dy)) scale(0.35);
+      transform: translate(calc(var(--px) * 1.5), calc(var(--py) * 1.6)) scale(0.35) rotate(22deg);
     }
+  }
+}
+
+@layer components {
+  /* 像素统一收口：按钮/卡片/色块 → 硬描边 + 实体偏移阴影，去掉流光闪烁 */
+  .volt-card {
+    border-radius: 0;
+    border: 3px solid #0a1b4d;
+    box-shadow: 6px 6px 0 rgba(10, 27, 77, 0.85);
+  }
+  .btn-primary {
+    border-radius: 0;
+    border: 3px solid #0a1b4d;
+    background: linear-gradient(180deg, #4a80ff, #2f6bff);
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.85);
+  }
+  .btn-primary::after {
+    display: none;
+    content: none;
+  }
+  .btn-primary:hover {
+    box-shadow: 5px 5px 0 rgba(10, 27, 77, 0.9);
+    transform: translate(-1px, -1px);
+  }
+  .btn-primary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0 rgba(10, 27, 77, 0.9);
+  }
+  .btn-secondary {
+    border-radius: 0;
+    border: 3px solid #0a1b4d;
+    background: #fff;
+    color: #122c7a;
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.75);
+  }
+  .btn-secondary:hover {
+    background: #eaf1ff;
+    border-color: #0a1b4d;
+    color: #122c7a;
+  }
+  .btn-secondary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0 rgba(10, 27, 77, 0.75);
+  }
+  .btn-ghost-light {
+    border-radius: 0;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.5);
+  }
+  /* 色块组件：aurora 一律改为纯色方块 */
+  .volt-aurora,
+  .volt-aurora.green,
+  .volt-aurora.amber,
+  .volt-aurora.neutral {
+    border-radius: 0;
+    border: 2px solid #0a1b4d;
+    background: #eef2ff;
+    box-shadow: 4px 4px 0 rgba(10, 27, 77, 0.8);
+  }
+  .volt-aurora::before,
+  .volt-aurora::after {
+    content: none;
+    animation: none;
+    filter: none;
+  }
+  .voxel-scan::before {
+    content: none;
+    animation: none;
+  }
+  /* 工作台木质背景的像素点点 */
+  .craft-frame {
+    position: relative;
+  }
+  .craft-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+    background-image: radial-gradient(rgba(46, 33, 23, 0.16) 1px, transparent 1px);
+    background-size: 5px 5px;
+  }
+  .craft-frame > * {
+    position: relative;
+    z-index: 1;
   }
 }
 

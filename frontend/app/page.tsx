@@ -345,7 +345,7 @@ export default function HomePage() {
             </div>
 
             <Reveal>
-              <div className="voxel-scan voxel-panel-dark relative mt-16 px-8 py-12 text-center">
+              <div className="voxel-panel-dark relative mt-16 px-8 py-12 text-center">
                 <h2 className="voxel-text-shadow text-[30px] font-bold tracking-tight text-white md:text-[40px]">
                   现在开始第一次选型
                 </h2>

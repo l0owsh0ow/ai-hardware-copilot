@@ -5,10 +5,11 @@ import { useEffect, useRef, useState } from "react";
 
 const COLS = 22;
 const ROWS = 14;
+const PALETTE = ["#f4f7fb", "#f4f7fb", "#eaf1ff", "#2f6bff", "#f4f7fb", "#12b76a", "#f4f7fb", "#8a6a3c"];
 
 /**
- * 路由切换过渡：新页面垫满一层密集小像素，按「不同位置随机」逐个溶解消失，
- * 形成像素点碎散的效果，露出新页面。pointer-events:none，不阻塞交互。
+ * 路由切换过渡：新页面垫满一层密集小像素（非纯白，取自页面配色），
+ * 按不同位置的随机先后分步移动 + 缩放，像页面像素被敲碎散落，露出新页面。
  * 延迟/时长/位移用固定散列生成，SSR 与客户端一致，避免水合警告。
  */
 export default function BlockTransition() {
@@ -29,18 +30,19 @@ export default function BlockTransition() {
   const cells: React.ReactNode[] = [];
   for (let i = 0; i < COLS * ROWS; i++) {
     const delay = ((i * 37) % 130) / 130 * 1.0;
-    const dur = 0.28 + ((i * 53) % 45) / 100;
-    const dx = (((i * 7) % 11) - 5) * 7;
-    const dy = (((i * 13) % 9) - 4) * 8;
+    const dur = 0.32 + ((i * 53) % 42) / 100;
+    const px = (((i * 7) % 5) - 2) * 18;
+    const py = (((i * 13) % 5) - 2) * 20;
     cells.push(
       <div
         key={i}
         className="px-cell"
         style={{
+          backgroundColor: PALETTE[i % PALETTE.length],
           ["--delay" as never]: `${delay}s`,
           ["--dur" as never]: `${dur}s`,
-          ["--dx" as never]: `${dx}px`,
-          ["--dy" as never]: `${dy}px`,
+          ["--px" as never]: `${px}px`,
+          ["--py" as never]: `${py}px`,
         }}
       />
     );

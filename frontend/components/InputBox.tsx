@@ -81,9 +81,9 @@ export default function InputBox({
 
   if (loading) {
     return (
-      <div className="voxel-card mx-auto max-w-3xl p-8">
+      <div className="craft-frame mx-auto max-w-3xl p-8">
         <div className="mb-8 text-center">
-          <div className="voxel-block mb-4 inline-flex h-14 w-14 items-center justify-center bg-brand-100">
+          <div className="voxel-block mb-4 inline-flex h-14 w-14 items-center justify-center bg-[#8a6a3c] text-[#fff3dd]">
             <svg className="h-7 w-7 animate-spin text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -105,13 +105,13 @@ export default function InputBox({
 
         <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="rounded-none border-2 border-ink-950 bg-white p-4">
+            <div key={i} className="rounded-none border-2 border-[#2e2117] bg-[#f7efdb] p-4">
               <div className="skeleton mb-2 h-3 w-16 rounded" />
               <div className="skeleton h-5 w-24 rounded" />
             </div>
           ))}
         </div>
-        <div className="rounded-none border-2 border-ink-950 bg-white p-6">
+        <div className="rounded-none border-2 border-[#2e2117] bg-[#f7efdb] p-6">
           <div className="skeleton mb-4 h-4 w-40 rounded" />
           <div className="space-y-3">
             <div className="skeleton h-3 w-full rounded" />
@@ -161,8 +161,8 @@ export default function InputBox({
           }}
         />
         <div className="mt-1.5 flex items-center justify-between">
-          <span className="font-mono text-xs text-[#a98d5c]">Ctrl + Enter 快速提交</span>
-          <span className={`text-xs ${text.length > 450 ? "text-warning-600" : "text-[#a98d5c]"}`}>
+          <span className="font-mono text-xs text-[#3a2a18]">Ctrl + Enter 快速提交</span>
+          <span className={`text-xs ${text.length > 450 ? "text-warning-600" : "text-[#3a2a18]"}`}>
             {text.length} / 500
           </span>
         </div>
