@@ -32,7 +32,7 @@ export default function TopBar({
   const [inFlow, setInFlow] = useState(false);
 
   useEffect(() => {
-    setInFlow(Boolean(store.getParams() || store.getRecommendations()));
+    setInFlow(Boolean((store.getParams() || store.getRecommendations()) && !store.getBom()));
   }, []);
 
   return (

@@ -33,7 +33,10 @@ export const store = {
   getRecommendations: () => read<Component[]>(KEYS.recommendations),
   setRecommendations: (r: Component[]) => write(KEYS.recommendations, r),
   getBom: () => read<BOMTable>(KEYS.bom),
-  setBom: (b: BOMTable) => write(KEYS.bom, b),
+  setBom: (b: BOMTable | null) => {
+    if (b) write(KEYS.bom, b);
+    else if (typeof window !== "undefined") window.sessionStorage.removeItem(KEYS.bom);
+  },
   getSelected: () => read<string[]>(KEYS.selected) || [],
   setSelected: (ids: string[]) => write(KEYS.selected, ids),
   getQuery: () => read<string>(KEYS.query) || "",

@@ -109,7 +109,7 @@ export default function HistoryPage() {
               <div className="mb-6 ml-10 flex flex-wrap items-center gap-3 text-xs text-ink-400">
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {detail.created_at}
+                  开始于 {detail.created_at}
                 </span>
                 <span>{detail.query_text}</span>
               </div>
@@ -209,7 +209,7 @@ export default function HistoryPage() {
                         <div className="mb-1 line-clamp-1 text-xs text-ink-400">{it.query_text}</div>
                         <div className="flex items-center gap-1 text-xs text-ink-400">
                           <Clock className="h-3 w-3" />
-                          {it.created_at}
+                          开始于 {it.created_at}
                         </div>
                       </button>
                       <div className="ml-3 flex items-center gap-2">

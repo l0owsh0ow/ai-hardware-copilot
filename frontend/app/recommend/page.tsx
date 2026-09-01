@@ -206,19 +206,6 @@ export default function RecommendPage() {
       <TopBar current={currentStep} />
       <div className="mx-auto max-w-6xl px-4 pt-28 pb-12 sm:px-6">
         <div className="mx-auto max-w-3xl">
-          {stage !== "params" && (
-            <button
-              type="button"
-              onClick={() => {
-                setStage("params");
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              className="btn-secondary mb-4 !py-2 text-xs"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              返回参数确认
-            </button>
-          )}
           <div className="mb-1 flex items-center gap-2">
             <div className="volt-aurora green flex h-8 w-8 items-center justify-center rounded-xl">
               <Check className="h-5 w-5 text-success-600" />

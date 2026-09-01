@@ -2,55 +2,63 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
-const COLS = 22;
-const ROWS = 14;
-const PALETTE = ["#f4f7fb", "#f4f7fb", "#eaf1ff", "#2f6bff", "#f4f7fb", "#12b76a", "#f4f7fb", "#8a6a3c"];
+import html2canvas from "html2canvas";
 
 /**
- * 路由切换过渡：新页面垫满一层密集小像素（非纯白，取自页面配色），
- * 按不同位置的随机先后分步移动 + 缩放，像页面像素被敲碎散落，露出新页面。
- * 延迟/时长/位移用固定散列生成，SSR 与客户端一致，避免水合警告。
+ * 路由切换：抓取当前页面画面作为「破碎对象」，切换后把旧画面像素化、不规则消失，
+ * 露出新页面。只在点击站内链接时抓图，pointer-events:none 不阻塞交互。
  */
 export default function BlockTransition() {
   const path = usePathname();
   const prev = useRef(path);
-  const [breaking, setBreaking] = useState(false);
+  const snapRef = useRef<{ url: string; t: number } | null>(null);
+  const [overlay, setOverlay] = useState<string | null>(null);
+
+  useEffect(() => {
+    let captured = false;
+    async function capture() {
+      if (captured) return;
+      captured = true;
+      try {
+        const canvas = await html2canvas(document.body, {
+          backgroundColor: "#f4f7fb",
+          scale: 0.28,
+          useCORS: true,
+          logging: false,
+        });
+        snapRef.current = { url: canvas.toDataURL("image/png"), t: Date.now() };
+      } catch {
+        /* 抓取失败则无过渡 */
+      }
+    }
+    function onPointerDown(e: PointerEvent) {
+      const a = (e.target as HTMLElement).closest?.("a") as HTMLAnchorElement | null;
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (!href.startsWith("/") || href.startsWith("//") || href.startsWith("/#")) return;
+      void capture();
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, []);
 
   useEffect(() => {
     if (prev.current === path) return;
     prev.current = path;
-    setBreaking(true);
-    const t = window.setTimeout(() => setBreaking(false), 1600);
+    const t = window.setTimeout(() => {
+      const s = snapRef.current;
+      if (s && Date.now() - s.t < 1400) {
+        setOverlay(s.url);
+        window.setTimeout(() => setOverlay(null), 1250);
+      }
+    }, 90);
     return () => window.clearTimeout(t);
   }, [path]);
 
-  if (!breaking) return null;
-
-  const cells: React.ReactNode[] = [];
-  for (let i = 0; i < COLS * ROWS; i++) {
-    const delay = ((i * 37) % 130) / 130 * 1.0;
-    const dur = 0.32 + ((i * 53) % 42) / 100;
-    const px = (((i * 7) % 5) - 2) * 18;
-    const py = (((i * 13) % 5) - 2) * 20;
-    cells.push(
-      <div
-        key={i}
-        className="px-cell"
-        style={{
-          backgroundColor: PALETTE[i % PALETTE.length],
-          ["--delay" as never]: `${delay}s`,
-          ["--dur" as never]: `${dur}s`,
-          ["--px" as never]: `${px}px`,
-          ["--py" as never]: `${py}px`,
-        }}
-      />
-    );
-  }
-
+  if (!overlay) return null;
   return (
-    <div className="block-trans breaking" aria-hidden="true">
-      {cells}
+    <div className="ptr-break" aria-hidden="true">
+      <img src={overlay} className="ptr-break-img" alt="" draggable={false} />
     </div>
   );
 }

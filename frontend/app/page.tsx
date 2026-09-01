@@ -160,6 +160,7 @@ export default function HomePage() {
       store.setQuery(text);
       store.setRecommendations([]);
       store.setSelected([]);
+      store.setBom(null);
       router.push("/recommend");
     } catch (e) {
       track("parse_fail");
