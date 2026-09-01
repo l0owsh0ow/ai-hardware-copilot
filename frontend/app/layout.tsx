@@ -5,6 +5,7 @@ import "@fontsource/outfit/600.css";
 import "@fontsource/outfit/700.css";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
+import BlockTransition from "@/components/BlockTransition";
 import CursorFX from "@/components/CursorFX";
 import PageViewTracker from "@/components/PageViewTracker";
 import VoltBackground from "@/components/VoltBackground";
@@ -21,6 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <VoltBackground />
         <CursorFX />
+        <BlockTransition />
+        <div className="pixel-grain" aria-hidden="true" />
         <PageViewTracker />
         {children}
       </body>

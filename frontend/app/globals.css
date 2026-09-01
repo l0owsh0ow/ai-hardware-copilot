@@ -739,6 +739,77 @@
       transform: rotate(360deg);
     }
   }
+
+  /* 启用自定义光标时隐藏系统指针 */
+  body.has-fx,
+  body.has-fx * {
+    cursor: none !important;
+  }
+
+  .cursor-img {
+    image-rendering: pixelated;
+  }
+
+  /* 镐子挥动（点击时快速摆动，模拟撸方块） */
+  .cursor-swing {
+    animation: cursorSwing 0.22s ease-out;
+  }
+  @keyframes cursorSwing {
+    0% {
+      transform: rotate(-22deg);
+    }
+    60% {
+      transform: rotate(28deg);
+    }
+    100% {
+      transform: rotate(0);
+    }
+  }
+
+  /* 全站极淡像素颗粒感 */
+  .pixel-grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    opacity: 0.05;
+    background-image:
+      linear-gradient(45deg, rgba(10, 27, 77, 0.5) 25%, transparent 25%, transparent 75%, rgba(10, 27, 77, 0.5) 75%),
+      linear-gradient(45deg, rgba(10, 27, 77, 0.5) 25%, transparent 25%, transparent 75%, rgba(10, 27, 77, 0.5) 75%);
+    background-size: 3px 3px;
+    background-position: 0 0, 1.5px 1.5px;
+  }
+
+  /* 路由切换：方块被撸下来 */
+  .block-trans {
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+  }
+  .block-trans .bt-cell {
+    background: #f4f7fb;
+    box-shadow: inset 0 0 0 1px rgba(10, 27, 77, 0.16);
+    opacity: 1;
+  }
+  .block-trans.breaking .bt-cell {
+    animation: blockBreak 0.6s cubic-bezier(.22, 0.7, 0.34, 1) both;
+    animation-delay: calc(var(--i) * 16ms);
+  }
+  @keyframes blockBreak {
+    0% {
+      opacity: 1;
+      transform: translateY(0) rotate(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(130px) rotate(8deg) scale(0.92);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -5,19 +5,21 @@ import { useEffect, useRef } from "react";
 const COLORS = ["#2f6bff", "#12b76a", "#8fb4ff", "#64d69b", "#ffffff"];
 
 /**
- * 全局光标特效：像素小光块 + 柔光晕平滑跟随指针（用 ref + rAF，不碰 React 状态），
- * 点击时在指针处爆开一圈像素方块。尊重 prefers-reduced-motion，禁用时静止不闪。
+ * 自定义鼠标指针：钻石镐跟随光标（隐藏系统指针），点击时挥动一下（模拟撸方块），
+ * 并在指尖爆开一圈像素方块。整个跟随用 ref + rAF，不触发 React 重渲染。
+ * 尊重 prefers-reduced-motion：开启时不启用，保留系统光标。
  */
 export default function CursorFX() {
   const glowRef = useRef<HTMLDivElement>(null);
-  const sparkRef = useRef<HTMLDivElement>(null);
+  const pickRef = useRef<HTMLDivElement>(null);
   const burstRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (media.matches) return;
+    document.body.classList.add("has-fx");
 
-    let tx = -200, ty = -200, gx = -200, gy = -200, sx = -200, sy = -200;
+    let tx = -200, ty = -200, gx = -200, gy = -200, px = -200, py = -200;
     let raf = 0;
 
     function spawnBurst(x: number, y: number) {
@@ -28,8 +30,6 @@ export default function CursorFX() {
         const size = 4 + Math.random() * 6;
         const ang = (Math.PI * 2 * i) / 10 + Math.random() * 0.5;
         const dist = 12 + Math.random() * 24;
-        const dx = Math.cos(ang) * dist;
-        const dy = Math.sin(ang) * dist;
         el.className = "absolute block";
         el.style.width = `${size}px`;
         el.style.height = `${size}px`;
@@ -43,37 +43,46 @@ export default function CursorFX() {
         el.style.transition = "transform .55s cubic-bezier(.16,1,.3,1), opacity .5s ease-out";
         host.appendChild(el);
         requestAnimationFrame(() => {
-          el.style.transform = `translate(${dx}px, ${dy}px) rotate(${Math.random() * 360}deg)`;
+          el.style.transform = `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px) rotate(${Math.random() * 360}deg)`;
           el.style.opacity = "0";
         });
         window.setTimeout(() => el.remove(), 560);
       }
     }
 
+    function swing() {
+      const wrap = pickRef.current?.querySelector(".cursor-img-wrap");
+      if (!wrap) return;
+      wrap.classList.remove("cursor-swing");
+      void (wrap as HTMLElement).offsetWidth;
+      wrap.classList.add("cursor-swing");
+    }
+
     function onMove(e: PointerEvent) {
       tx = e.clientX;
       ty = e.clientY;
       if (glowRef.current) glowRef.current.style.opacity = "1";
-      if (sparkRef.current) sparkRef.current.style.opacity = "1";
+      if (pickRef.current) pickRef.current.style.opacity = "1";
     }
     function onLeave() {
       if (glowRef.current) glowRef.current.style.opacity = "0";
-      if (sparkRef.current) sparkRef.current.style.opacity = "0";
+      if (pickRef.current) pickRef.current.style.opacity = "0";
     }
     function onDown(e: PointerEvent) {
       spawnBurst(e.clientX, e.clientY);
+      swing();
     }
 
     function tick() {
       gx += (tx - gx) * 0.16;
       gy += (ty - gy) * 0.16;
-      sx += (tx - sx) * 0.28;
-      sy += (ty - sy) * 0.28;
+      px += (tx - px) * 0.32;
+      py += (ty - py) * 0.32;
       if (glowRef.current) {
         glowRef.current.style.transform = `translate3d(${gx}px, ${gy}px, 0) translate(-50%, -50%)`;
       }
-      if (sparkRef.current) {
-        sparkRef.current.style.transform = `translate3d(${sx}px, ${sy}px, 0) translate(-50%, -50%)`;
+      if (pickRef.current) {
+        pickRef.current.style.transform = `translate3d(${px}px, ${py}px, 0) translate(-50%, -50%)`;
       }
       raf = requestAnimationFrame(tick);
     }
@@ -87,31 +96,31 @@ export default function CursorFX() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
       document.removeEventListener("pointerleave", onLeave);
+      document.body.classList.remove("has-fx");
     };
   }, []);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[70]" aria-hidden="true">
-      {/* 柔光晕，跟随指针 */}
       <div
         ref={glowRef}
-        className="absolute left-0 top-0 h-44 w-44 opacity-0 transition-opacity duration-300"
+        className="absolute left-0 top-0 h-40 w-40 opacity-0 transition-opacity duration-300"
         style={{
           background:
-            "radial-gradient(circle, rgba(47,107,255,.26) 0%, rgba(18,183,106,.12) 42%, transparent 68%)",
+            "radial-gradient(circle, rgba(47,107,255,.22) 0%, rgba(18,183,106,.1) 45%, transparent 70%)",
         }}
       />
-      {/* 像素小光块，缓动跟随指针 */}
-      <div ref={sparkRef} className="absolute left-0 top-0 h-6 w-6 opacity-0 transition-opacity duration-300">
-        <div className="cursor-rotate absolute inset-0">
-          <span className="absolute left-0 top-0 h-2 w-2 bg-brand-500 shadow-[1px_1px_0_rgba(10,27,77,.7)]" />
-          <span className="absolute left-3 top-3 h-2 w-2 bg-success-500 shadow-[1px_1px_0_rgba(10,27,77,.7)]" />
-          <span className="absolute left-3 top-0 h-2 w-2 bg-brand-300 shadow-[1px_1px_0_rgba(10,27,77,.7)]" />
-          <span className="absolute left-0 top-3 h-2 w-2 bg-success-300 shadow-[1px_1px_0_rgba(10,27,77,.7)]" />
-          <span className="absolute left-2 top-2 h-2 w-2 bg-white shadow-[1px_1px_0_rgba(10,27,77,.7)]" />
+      {/* 钻石镐指针 */}
+      <div ref={pickRef} className="absolute left-0 top-0 h-14 w-14 opacity-0 transition-opacity duration-300">
+        <div className="cursor-img-wrap h-full w-full">
+          <img
+            src="/cursor/pickaxe.png"
+            alt=""
+            draggable={false}
+            className="cursor-img h-full w-full"
+          />
         </div>
       </div>
-      {/* 点击爆开像素方块的宿主层 */}
       <div ref={burstRef} className="absolute left-0 top-0" />
     </div>
   );
