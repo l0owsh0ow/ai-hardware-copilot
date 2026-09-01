@@ -6,38 +6,30 @@ import html2canvas from "html2canvas";
 
 /**
  * 路由切换：抓取当前页面画面作为「破碎对象」，切换后把旧画面像素化、不规则消失，
- * 露出新页面。抓图在点击站内链接的瞬间开始（锁存旧页面），并在切换后等待抓图完成再播放。
- * pointer-events:none，不阻塞交互。
+ * 露出新页面。只在点击站内链接时抓图，pointer-events:none 不阻塞交互。
  */
 export default function BlockTransition() {
   const path = usePathname();
   const prev = useRef(path);
-  const pendingRef = useRef<Promise<string | null> | null>(null);
+  const snapRef = useRef<{ url: string; t: number } | null>(null);
   const [overlay, setOverlay] = useState<string | null>(null);
 
   useEffect(() => {
-    async function capture(): Promise<string | null> {
-      if (pendingRef.current) return pendingRef.current;
-      const p = (async () => {
-        try {
-          const canvas = await html2canvas(document.body, {
-            backgroundColor: "#f4f7fb",
-            scale: 0.3,
-            useCORS: true,
-            logging: false,
-            ignoreElements: (el) => {
-              if (el.classList?.contains("pixel-grain")) return true;
-              if (el.classList?.contains("voxel-cube")) return true;
-              return false;
-            },
-          });
-          return canvas.toDataURL("image/png");
-        } catch {
-          return null;
-        }
-      })();
-      pendingRef.current = p;
-      return p;
+    let captured = false;
+    async function capture() {
+      if (captured) return;
+      captured = true;
+      try {
+        const canvas = await html2canvas(document.body, {
+          backgroundColor: "#f4f7fb",
+          scale: 0.28,
+          useCORS: true,
+          logging: false,
+        });
+        snapRef.current = { url: canvas.toDataURL("image/png"), t: Date.now() };
+      } catch {
+        /* 抓取失败则无过渡 */
+      }
     }
     function onPointerDown(e: PointerEvent) {
       const a = (e.target as HTMLElement).closest?.("a") as HTMLAnchorElement | null;
@@ -54,15 +46,12 @@ export default function BlockTransition() {
     if (prev.current === path) return;
     prev.current = path;
     const t = window.setTimeout(() => {
-      const p = pendingRef.current;
-      if (!p) return;
-      const timeout = new Promise<null>((res) => window.setTimeout(() => res(null), 900));
-      Promise.race([p, timeout]).then((url) => {
-        if (!url) return;
-        setOverlay(url);
+      const s = snapRef.current;
+      if (s && Date.now() - s.t < 1400) {
+        setOverlay(s.url);
         window.setTimeout(() => setOverlay(null), 1250);
-      });
-    }, 60);
+      }
+    }, 90);
     return () => window.clearTimeout(t);
   }, [path]);
 
