@@ -407,11 +407,11 @@ export default function RecommendPage() {
                 <div className="flex items-center justify-between pt-2">
                   <button
                     type="button"
-                    onClick={() => setStage("params")}
+                    onClick={() => router.push("/#engine")}
                     className="btn-secondary text-sm"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    修改参数
+                    修改需求
                   </button>
                   <div className="flex items-center gap-2">
                     <button
