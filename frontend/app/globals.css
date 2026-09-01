@@ -729,6 +729,16 @@
   .voxel-text-shadow {
     text-shadow: 3px 3px 0 rgba(10, 27, 77, 0.85);
   }
+
+  /* 光标像素块缓慢旋转 */
+  .cursor-rotate {
+    animation: cursorRotate 6s linear infinite;
+  }
+  @keyframes cursorRotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

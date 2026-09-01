@@ -5,6 +5,7 @@ import "@fontsource/outfit/600.css";
 import "@fontsource/outfit/700.css";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
+import CursorFX from "@/components/CursorFX";
 import PageViewTracker from "@/components/PageViewTracker";
 import VoltBackground from "@/components/VoltBackground";
 import "./globals.css";
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="zh-CN">
       <body>
         <VoltBackground />
+        <CursorFX />
         <PageViewTracker />
         {children}
       </body>
