@@ -13,7 +13,9 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { store } from "@/lib/store";
 
 const STEP_ICONS = [PenLine, ListChecks, Layers, FileSpreadsheet];
 const STEP_LABELS = ["输入需求", "参数确认", "元件推荐", "BOM导出"];
@@ -26,6 +28,14 @@ export default function TopBar({
   onStart?: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  // 是否已进入主流程（有本次选型的参数/结果）；进入后再离开到个人页可一键回到选型
+  const [inFlow, setInFlow] = useState(false);
+
+  useEffect(() => {
+    setInFlow(
+      Boolean(store.getParams() || store.getRecommendations() || store.getQuery())
+    );
+  }, []);
 
   return (
     <>
@@ -69,7 +79,7 @@ export default function TopBar({
                         {state === "done" ? <Check className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
                       </span>
                       <span
-                        className={`hidden text-xs font-medium lg:inline ${
+                        className={`hidden text-[11px] font-semibold sm:inline ${
                           state === "active" ? "text-brand-700" : "text-ink-400"
                         }`}
                       >
@@ -143,11 +153,11 @@ export default function TopBar({
               </button>
             ) : (
               <Link
-                href="/#engine"
+                href={inFlow ? "/recommend" : "/#engine"}
                 onClick={() => setOpen(false)}
                 className="voxel-btn hidden !px-5 !py-2.5 text-sm sm:inline-flex"
               >
-                <span>开始选型</span>
+                <span>{inFlow ? "回到选型" : "开始选型"}</span>
                 <span className="arr">
                   <svg
                     width="13"
@@ -190,8 +200,8 @@ export default function TopBar({
             开始选型
           </button>
         ) : (
-          <Link href="/" onClick={() => setOpen(false)}>
-            开始选型
+          <Link href={inFlow ? "/recommend" : "/"} onClick={() => setOpen(false)}>
+            {inFlow ? "回到选型" : "开始选型"}
           </Link>
         )}
         <Link href="/history" onClick={() => setOpen(false)}>

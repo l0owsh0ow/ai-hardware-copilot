@@ -111,7 +111,7 @@ export default function CursorFX() {
         }}
       />
       {/* 钻石镐指针 */}
-      <div ref={pickRef} className="absolute left-0 top-0 h-14 w-14 opacity-0 transition-opacity duration-300">
+      <div ref={pickRef} className="absolute left-0 top-0 h-[37px] w-[37px] opacity-0 transition-opacity duration-300">
         <div className="cursor-img-wrap h-full w-full">
           <img
             src="/cursor/pickaxe.png"

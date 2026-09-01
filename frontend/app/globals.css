@@ -781,33 +781,66 @@
     background-position: 0 0, 1.5px 1.5px;
   }
 
-  /* 路由切换：方块被撸下来 */
+  /* 工作台（crafting table）风格：等距方块切面 + 合成格 */
+  .craft-frame {
+    background: linear-gradient(155deg, #ffffff 0%, #eef3fb 55%, #e2e9f5 100%);
+    border: 3px solid #0a1b4d;
+    border-radius: 0;
+    box-shadow:
+      inset 2px 2px 0 rgba(255, 255, 255, 0.65),
+      inset -3px -3px 0 rgba(10, 27, 77, 0.14),
+      8px 8px 0 rgba(10, 27, 77, 0.88);
+  }
+  .craft-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(3, 9px);
+    gap: 2px;
+  }
+  .craft-grid span {
+    width: 9px;
+    height: 9px;
+    background: #dbe7ff;
+    box-shadow: inset 0 0 0 1px rgba(10, 27, 77, 0.4);
+  }
+  .craft-grid span:nth-child(5) {
+    background: #12b76a;
+  }
+  .craft-slot {
+    position: relative;
+    border: 2px solid #0a1b4d;
+    border-radius: 0;
+    background: linear-gradient(180deg, #fbfdff, #eef3fb);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 -3px 0 rgba(10, 27, 77, 0.1);
+  }
+
+  /* 路由切换：像素点随机溶解消失（方块破碎感） */
   .block-trans {
     position: fixed;
     inset: 0;
     z-index: 65;
     pointer-events: none;
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(7, 1fr);
+    grid-template-columns: repeat(22, 1fr);
+    grid-template-rows: repeat(14, 1fr);
   }
-  .block-trans .bt-cell {
+  .block-trans .px-cell {
     background: #f4f7fb;
-    box-shadow: inset 0 0 0 1px rgba(10, 27, 77, 0.16);
-    opacity: 1;
+    box-shadow: inset 0 0 0 1px rgba(10, 27, 77, 0.1);
   }
-  .block-trans.breaking .bt-cell {
-    animation: blockBreak 0.6s cubic-bezier(.22, 0.7, 0.34, 1) both;
-    animation-delay: calc(var(--i) * 16ms);
+  .block-trans.breaking .px-cell {
+    animation: pixelDissolve var(--dur) ease-out both;
+    animation-delay: var(--delay);
   }
-  @keyframes blockBreak {
+  @keyframes pixelDissolve {
     0% {
       opacity: 1;
-      transform: translateY(0) rotate(0) scale(1);
+      transform: translate(0, 0) scale(1);
     }
     100% {
       opacity: 0;
-      transform: translateY(130px) rotate(8deg) scale(0.92);
+      transform: translate(var(--dx), var(--dy)) scale(0.35);
     }
   }
 }

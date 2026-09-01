@@ -6,7 +6,6 @@ import {
   ChevronDown,
   Eraser,
   Home,
-  MessageSquareText,
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
@@ -125,15 +124,23 @@ export default function InputBox({
   }
 
   return (
-      <div className="voxel-card mx-auto max-w-3xl overflow-hidden">
-      <div className="p-6">
-        <div className="mb-3 flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm font-semibold text-ink-800">
-            <span className="voxel-block grid h-8 w-8 place-items-center bg-brand-100 text-brand-700">
-              <MessageSquareText className="h-4 w-4" />
-            </span>
-            项目需求描述
-          </label>
+      <div className="craft-frame mx-auto max-w-3xl overflow-hidden">
+        <div className="p-6">
+          <div className="mb-3 flex items-center justify-between">
+            <label className="flex items-center gap-2 text-sm font-semibold text-ink-800">
+              <span className="craft-grid" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
+              需求描述 · 工作台
+            </label>
           <span className="hidden items-center gap-1.5 font-mono text-[11px] text-success-600 sm:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-success-500" />
             本地解析
@@ -193,9 +200,9 @@ export default function InputBox({
           {selects.map((s) => (
             <div key={s.label}>
               <label className="mb-1.5 block text-xs text-ink-500">{s.label}</label>
-              <div className="relative">
+              <div className="craft-slot relative">
                 <select
-                  className="w-full cursor-pointer appearance-none rounded-none border-2 border-ink-950 bg-white py-2 pl-3 pr-8 text-sm text-ink-700 outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full cursor-pointer appearance-none rounded-none border-0 bg-transparent py-2 pl-3 pr-8 text-sm font-semibold text-ink-800 outline-none transition-all focus:ring-2 focus:ring-brand-500/20"
                   value={s.value}
                   onChange={(e) => s.set(e.target.value)}
                 >
