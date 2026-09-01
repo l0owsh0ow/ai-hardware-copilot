@@ -127,7 +127,7 @@ export default function InputBox({
       <div className="craft-frame mx-auto max-w-3xl overflow-hidden">
         <div className="p-6">
           <div className="mb-3 flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm font-semibold text-ink-800">
+            <label className="flex items-center gap-2 text-sm font-semibold text-[#3a2a18]">
               <span className="craft-grid" aria-hidden="true">
                 <span />
                 <span />
@@ -149,7 +149,7 @@ export default function InputBox({
         <Textarea
           rows={4}
           maxLength={500}
-          className="scrollbar-thin w-full resize-none rounded-none border-2 border-ink-950 bg-ink-50/60 px-4 py-3 text-sm text-ink-800 outline-none transition-all placeholder:text-ink-400 focus:border-brand-600 focus:bg-white focus:ring-2 focus:ring-brand-500/20"
+          className="scrollbar-thin w-full resize-none rounded-none border-2 border-[#2e2117] bg-[#f7efdb] px-4 py-3 text-sm text-[#3a2a18] outline-none transition-all placeholder:text-[#a98d5c] focus:border-[#5c432a] focus:bg-[#fff8e8] focus:ring-2 focus:ring-[#c98a4a]/30"
           placeholder="例如：我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上，最好能用 I2C 接口，预算 50 元以内..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -161,14 +161,14 @@ export default function InputBox({
           }}
         />
         <div className="mt-1.5 flex items-center justify-between">
-          <span className="font-mono text-xs text-ink-300">Ctrl + Enter 快速提交</span>
-          <span className={`text-xs ${text.length > 450 ? "text-warning-600" : "text-ink-400"}`}>
+          <span className="font-mono text-xs text-[#a98d5c]">Ctrl + Enter 快速提交</span>
+          <span className={`text-xs ${text.length > 450 ? "text-warning-600" : "text-[#a98d5c]"}`}>
             {text.length} / 500
           </span>
         </div>
 
         <div className="mt-3">
-          <div className="mb-2 flex items-center gap-1 text-xs text-ink-400">
+          <div className="mb-2 flex items-center gap-1 text-xs text-[#6b4f2c]">
             <Sparkles className="h-3 w-3 text-brand-500" />
             快速示例
           </div>
@@ -178,7 +178,7 @@ export default function InputBox({
                 key={ex.short}
                 type="button"
                 onClick={() => setText(ex.text)}
-                className="voxel-chip px-3 py-1.5 text-xs font-medium text-brand-800 transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
+                className="border-2 border-[#2e2117] bg-[#8a6a3c] px-3 py-1.5 text-xs font-medium text-[#fff3dd] shadow-[2px_2px_0_rgba(46,33,23,.5)] transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
               >
                 <ex.Icon className="h-3 w-3" />
                 {ex.short}
@@ -190,19 +190,19 @@ export default function InputBox({
 
       <div className="h-0.5 bg-ink-950" />
 
-      <div className="bg-ink-50 p-6">
-        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-ink-600">
-          <SlidersHorizontal className="h-4 w-4 text-ink-400" />
+      <div className="bg-[#efe4c9] p-6">
+        <div className="mb-4 flex items-center gap-2 text-sm font-medium text-[#5c432a]">
+          <SlidersHorizontal className="h-4 w-4 text-[#8a6a3c]" />
           补充参数
-          <span className="text-xs font-normal text-ink-400">可选，不填 AI 会自动推断</span>
+          <span className="text-xs font-normal text-[#8a6a3c]">可选，不填 AI 会自动推断</span>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {selects.map((s) => (
             <div key={s.label}>
-              <label className="mb-1.5 block text-xs text-ink-500">{s.label}</label>
+              <label className="mb-1.5 block text-xs text-[#6b4f2c]">{s.label}</label>
               <div className="craft-slot relative">
                 <select
-                  className="w-full cursor-pointer appearance-none rounded-none border-0 bg-transparent py-2 pl-3 pr-8 text-sm font-semibold text-ink-800 outline-none transition-all focus:ring-2 focus:ring-brand-500/20"
+                  className="w-full cursor-pointer appearance-none rounded-none border-0 bg-transparent py-2 pl-3 pr-8 text-sm font-semibold text-[#4a3620] outline-none transition-all focus:ring-2 focus:ring-[#c98a4a]/30"
                   value={s.value}
                   onChange={(e) => s.set(e.target.value)}
                 >
@@ -210,15 +210,15 @@ export default function InputBox({
                     <option key={o}>{o}</option>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400" />
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#8a6a3c]" />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t-2 border-ink-950 bg-white p-4">
-        <div className="flex items-center gap-1.5 text-xs text-ink-400">
+      <div className="flex items-center justify-between gap-3 border-t-2 border-[#2e2117] bg-[#f3e9cf] p-4">
+        <div className="flex items-center gap-1.5 text-xs text-[#8a6a3c]">
           <ShieldCheck className="h-3.5 w-3.5 text-success-500" />
           数据来源：立创商城 · Datasheet
         </div>
@@ -226,7 +226,7 @@ export default function InputBox({
           <button
             type="button"
             onClick={() => setText("")}
-            className="voxel-btn voxel-btn-ghost !px-4 !py-2 text-sm"
+            className="voxel-btn voxel-btn-ghost !border-[#2e2117] bg-[#e0cba0] !px-4 !py-2 text-sm !text-[#3a2a18]"
           >
             <Eraser className="h-4 w-4" />
             清空

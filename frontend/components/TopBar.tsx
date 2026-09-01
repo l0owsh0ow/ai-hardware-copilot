@@ -32,9 +32,7 @@ export default function TopBar({
   const [inFlow, setInFlow] = useState(false);
 
   useEffect(() => {
-    setInFlow(
-      Boolean(store.getParams() || store.getRecommendations() || store.getQuery())
-    );
+    setInFlow(Boolean(store.getParams() || store.getRecommendations()));
   }, []);
 
   return (
@@ -129,7 +127,29 @@ export default function TopBar({
 
             <div className="mx-1 h-5 w-px bg-ink-200" />
 
-            {onStart ? (
+            {inFlow ? (
+              <Link
+                href="/recommend"
+                onClick={() => setOpen(false)}
+                className="voxel-btn hidden !px-5 !py-2.5 text-sm sm:inline-flex"
+              >
+                <span>回到选型</span>
+                <span className="arr">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </span>
+              </Link>
+            ) : onStart ? (
               <button
                 type="button"
                 onClick={onStart}
@@ -153,11 +173,11 @@ export default function TopBar({
               </button>
             ) : (
               <Link
-                href={inFlow ? "/recommend" : "/#engine"}
+                href="/#engine"
                 onClick={() => setOpen(false)}
                 className="voxel-btn hidden !px-5 !py-2.5 text-sm sm:inline-flex"
               >
-                <span>{inFlow ? "回到选型" : "开始选型"}</span>
+                <span>开始选型</span>
                 <span className="arr">
                   <svg
                     width="13"
@@ -188,7 +208,11 @@ export default function TopBar({
       </div>
 
       <div className={`volt-menu ${open ? "open" : ""}`}>
-        {onStart ? (
+        {inFlow ? (
+          <Link href="/recommend" onClick={() => setOpen(false)}>
+            回到选型
+          </Link>
+        ) : onStart ? (
           <button
             type="button"
             onClick={() => {
@@ -200,8 +224,8 @@ export default function TopBar({
             开始选型
           </button>
         ) : (
-          <Link href={inFlow ? "/recommend" : "/"} onClick={() => setOpen(false)}>
-            {inFlow ? "回到选型" : "开始选型"}
+          <Link href="/" onClick={() => setOpen(false)}>
+            开始选型
           </Link>
         )}
         <Link href="/history" onClick={() => setOpen(false)}>
