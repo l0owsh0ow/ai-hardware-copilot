@@ -1,5 +1,12 @@
 """FastAPI 入口。"""
 
+import os
+
+# 本地已缓存嵌入模型，强制离线加载（HuggingFace 在你这边不可达，
+# 联网探测会导致模型加载反复重试、超时卡顿）
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 import logging
 
 from fastapi import FastAPI
@@ -10,6 +17,7 @@ from .api import admin, analytics, bom, components, history, parse, recommend
 from .api import settings as settings_api
 from .config import get_settings
 from .db import init_db
+from .services.rag_service import warmup as rag_warmup
 from .security import rate_limit_middleware, require_token
 
 logging.basicConfig(
@@ -37,6 +45,8 @@ app.middleware("http")(rate_limit_middleware)
 @app.on_event("startup")
 def on_startup():
     init_db()
+    # 预热嵌入模型与向量库，避免首次推荐冷启动卡顿
+    rag_warmup()
 
 
 @app.get("/health")

@@ -15,3 +15,6 @@ frontend/.env.local
 # 系统
 .DS_Store
 Thumbs.db
+
+# 内部交接工作笔记（含敏感信息，不入库）
+docs/交接说明-简历与参赛.md

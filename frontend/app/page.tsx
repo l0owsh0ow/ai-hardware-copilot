@@ -390,7 +390,7 @@ export default function HomePage() {
               <div className="animate-slide-up text-center">
                 <div className="voxel-chip mb-4 px-3 py-1 text-xs font-medium text-brand-800">
                   <span className="badge-pulse h-1.5 w-1.5 rounded-full bg-brand-500" />
-                  AI 驱动 · 已收录 100+ 元器件
+                  AI 驱动 · 100+ 精选库 + 立创实时检索
                 </div>
                 <h1 className="mb-3 text-3xl font-bold tracking-tight text-ink-900 md:text-4xl">
                   描述你的硬件项目需求
@@ -410,7 +410,7 @@ export default function HomePage() {
             <div className="mt-8 flex items-center justify-center gap-6 text-xs text-ink-400">
               <div className="flex items-center gap-1.5">
                 <Database className="h-3.5 w-3.5" />
-                100+ 元器件知识库
+                100+ 精选库 · 可扩至库外在售
               </div>
               <div className="flex items-center gap-1.5">
                 <Zap className="h-3.5 w-3.5" />

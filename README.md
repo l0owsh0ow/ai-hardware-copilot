@@ -12,7 +12,28 @@ ai-hardware-copilot/
 └── docs/       # 项目文档（交接说明、原型）
 ```
 
+## 前置环境要求
+
+- **Python ≥ 3.10**：后端 FastAPI + RAG（需能创建虚拟环境）
+- **Node.js ≥ 18 + npm**：前端 Next.js 14
+- **可选**：本地 Ollama（GLM-4-9B / Qwen2.5-7B）。**不配置也能运行**——默认走内置 `mock` 解析/排序，无需任何 API Key。
+- 首次运行会自动下载嵌入模型（sentence-transformers，约 80MB，需联网）；离线时自动退化为关键词检索，仍能产出推荐结果。
+
+## 🚀 零配置一键启动（推荐）
+
+克隆后 **无需配置任何 Key、也无需安装 Ollama**，直接在项目根目录运行：
+
+- **Windows**：双击或运行 `start.bat`
+- **macOS / Linux**：`chmod +x start.sh && ./start.sh`
+
+脚本会自动：创建 Python 虚拟环境 → 安装后端/前端依赖 → 复制环境配置（默认 `LLM_PROVIDER=mock`）→ 构建元器件知识库 → 启动后端(8000)与前端(3000)。
+
+打开 `http://localhost:3000`，输入一句话需求（如“做一个低功耗蓝牙温湿度传感器”）即可跑通 输入→解析→推荐→BOM→Excel/CSV 导出 全流程。
+
+> 线下/离线环境：嵌入模型无缓存时会退化为关键词检索；立创实时检索不可用时自动跳过，本地知识库仍可正常推荐。可用 `ENABLE_LCSC=0` 关闭立创检索。
+
 ## 快速启动
+
 
 ### 1. 后端
 
@@ -22,7 +43,7 @@ python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env             # 默认 LLM_PROVIDER=mock，无需 API Key
-python ../data/build_kb.py       # 导入 20 个元器件到 SQLite + ChromaDB
+python ../data/build_kb.py       # 导入 100+ 个元器件到 SQLite + ChromaDB
 uvicorn app.main:app --reload --port 8000
 ```
 

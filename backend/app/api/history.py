@@ -21,7 +21,7 @@ router = APIRouter()
 
 
 def _compact_component(c: Component) -> dict:
-    """只保留紧凑字段，丢弃推荐理由等长文本以节省空间。"""
+    """保留紧凑字段 + 推荐理由（查看历史时能看到"为什么选它"）。"""
     return {
         "id": c.id,
         "part_number": c.part_number,
@@ -34,6 +34,7 @@ def _compact_component(c: Component) -> dict:
         "stock_status": c.stock_status,
         "datasheet_url": c.datasheet_url,
         "match_score": c.match_score,
+        "recommend_reason": c.recommend_reason,
     }
 
 

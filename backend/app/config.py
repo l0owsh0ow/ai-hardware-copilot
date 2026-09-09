@@ -31,6 +31,7 @@ class Settings:
         )
         self.rag_top_k: int = int(os.getenv("RAG_TOP_K", "30"))
         self.rag_max_recommendations: int = int(os.getenv("RAG_MAX_RECOMMENDATIONS", "5"))
+        self.enable_lcsc: bool = os.getenv("ENABLE_LCSC", "1").strip().lower() in ("1", "true", "yes")
         self.cors_origins: list[str] = [
             o.strip()
             for o in os.getenv(

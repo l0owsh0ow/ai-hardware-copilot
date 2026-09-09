@@ -6,9 +6,23 @@ import re
 from ..config import get_settings
 from ..db import db_session, row_to_component_dict
 from ..models.schemas import Component, StructuredParams
+from . import lcsc_service
 from .llm_service import LLMService
 
 logger = logging.getLogger(__name__)
+
+# 嵌入模型全局缓存：SentenceTransformer 冷加载很慢，只应加载一次，后续复用
+_embed_model = None
+
+
+def _get_embed_model():
+    """获取（并缓存）sentence-transformers 嵌入模型。"""
+    global _embed_model
+    if _embed_model is None:
+        from sentence_transformers import SentenceTransformer
+
+        _embed_model = SentenceTransformer(get_settings().embedding_model)
+    return _embed_model
 
 
 def _get_chroma_collection():
@@ -30,15 +44,23 @@ def _get_chroma_collection():
 
 def _embed(text: str):
     """使用 sentence-transformers 生成 384 维向量；不可用时返回 None。"""
-    settings = get_settings()
     try:
-        from sentence_transformers import SentenceTransformer
-
-        model = SentenceTransformer(settings.embedding_model)
-        return model.encode(text).tolist()
+        return _get_embed_model().encode(text).tolist()
     except Exception as exc:
         logger.warning("嵌入模型不可用，回退关键词检索: %s", exc)
         return None
+
+
+def warmup() -> None:
+    """预热嵌入模型与 Chroma 集合，避免首次推荐冷启动卡顿。"""
+    try:
+        _get_embed_model()
+    except Exception as exc:
+        logger.warning("嵌入模型预热失败: %s", exc)
+    try:
+        _get_chroma_collection()
+    except Exception as exc:
+        logger.warning("Chroma 预热失败: %s", exc)
 
 
 def _keyword_search(params: StructuredParams, limit: int) -> list[dict]:
@@ -191,60 +213,175 @@ def _structured_filter(candidates: list[dict], params: StructuredParams) -> list
     return filtered
 
 
+def _lcsc_queries(params: StructuredParams) -> list[str]:
+    """根据结构化参数生成立创搜索关键词（覆盖传感器/通信/主控/电源）。"""
+    app = params.application or ""
+    comm = " ".join(params.communication).lower()
+    queries: list[str] = []
+
+    if any(w in app for w in ("温湿度", "温度", "湿度", "温控")):
+        queries.append("温湿度传感器")
+    elif any(w in app for w in ("心率", "心电", "血氧", "体温")):
+        queries.append("心率传感器")
+    elif any(w in app for w in ("气体", "空气", "烟雾", "pm")):
+        queries.append("气体传感器")
+    elif any(w in app for w in ("光照", "光强", "光敏")):
+        queries.append("光敏传感器")
+    elif any(w in app for w in ("测距", "距离", "避障")):
+        queries.append("测距模块")
+
+    if "蓝牙" in comm or "ble" in comm:
+        queries.append("蓝牙模块")
+    elif "wifi" in comm or "wi-fi" in comm:
+        queries.append("wifi模块")
+    elif "lora" in comm:
+        queries.append("lora模块")
+
+    if not queries:
+        queries.append("单片机")
+
+    if "电池" in (params.power_supply or "") or "低功耗" in (params.power_consumption or ""):
+        queries.append("电源管理")
+
+    seen: set[str] = set()
+    out: list[str] = []
+    for q in queries:
+        if q and q not in seen:
+            seen.add(q)
+            out.append(q)
+    return out[:4]
+
+
+def _search_lcsc(params: StructuredParams, settings) -> list[dict]:
+    """立创实时检索，返回去重后的候选；失败返回空表。"""
+    if not settings.enable_lcsc:
+        return []
+    parts: list[dict] = []
+    seen: set[str] = set()
+    for q in _lcsc_queries(params):
+        for p in lcsc_service.search_parts(q, limit=5):
+            key = p["part_number"].lower()
+            if key in seen:
+                continue
+            # 只保留有库存的
+            if p.get("stock", 0) <= 0:
+                continue
+            seen.add(key)
+            parts.append(p)
+    return parts[:8]
+
+
+def _infer_category(c: dict) -> str:
+    """为本地候选推断品类（缺少 category 时用描述兜底）。"""
+    if c.get("category"):
+        return c["category"]
+    return lcsc_service._infer_category(c.get("description", ""))
+
+
+def _safe_float(value, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _assemble(ranked: list[dict], candidates: list[dict]) -> list[Component]:
+    """把候选排序结果组装成 Component 列表，逐条容错，绝不会因单条异常而失败。"""
+    by_part = {c["part_number"].lower(): c for c in candidates}
+    results: list[Component] = []
+    for item in ranked:
+        part = (item.get("part_number") or "").strip()
+        cand = by_part.get(part.lower())
+        if cand is None:
+            logger.warning("推荐了候选之外的型号，已丢弃: %s", part)
+            continue
+        if cand.get("source") == "lcsc":
+            comp = dict(
+                id=cand["id"],
+                part_number=cand["part_number"],
+                category=cand["category"],
+                subcategory=cand.get("subcategory") or "立创商城",
+                manufacturer=cand.get("manufacturer") or "",
+                key_params=cand.get("key_params") or {},
+                price_cny=_safe_float(cand.get("price_cny")),
+                price_unit=cand.get("price_unit") or "个",
+                stock_status=cand.get("stock_status") or "现货",
+                datasheet_url=cand.get("datasheet_url") or "",
+                recommend_reason=item.get("recommend_reason", ""),
+                match_score=_safe_float(item.get("match_score")),
+            )
+        else:
+            comp = dict(
+                id=cand["id"],
+                part_number=cand["part_number"],
+                category=cand["category"],
+                subcategory=cand.get("subcategory") or "",
+                manufacturer=cand.get("manufacturer") or "",
+                key_params=cand.get("key_params") or {},
+                price_cny=_safe_float(cand.get("price_cny")),
+                price_unit=cand.get("price_unit") or "个",
+                stock_status=cand.get("stock_status") or "",
+                datasheet_url=cand.get("datasheet_url") or "",
+                recommend_reason=item.get("recommend_reason", ""),
+                match_score=_safe_float(item.get("match_score")),
+            )
+        try:
+            results.append(Component(**comp))
+        except Exception as exc:
+            logger.warning("组装推荐结果失败，跳过 %s: %s", part, str(exc)[:120])
+    return results
+
+
 def recommend(params: StructuredParams) -> tuple[list[Component], bool]:
-    """推荐元器件。返回 (recommendations, degraded)；LLM 失败时回退规则排序。"""
+    """推荐元器件（本地知识库 RAG + 立创实时检索），异常时回退规则排序，绝不抛错。"""
     settings = get_settings()
     llm = LLMService()
 
-    candidates = _vector_search(params, settings.rag_top_k)
-    candidates = _structured_filter(candidates, params)
-
-    if not candidates:
-        return [], False
-
-    # 品类均衡压缩候选（每类最多 3 个、总计最多 15 个）：
-    # 控制在本地小模型的 4096 上下文内，同时保留品类覆盖
-    per_category: dict[str, list[dict]] = {}
-    for c in candidates:
-        per_category.setdefault(c["category"], []).append(c)
-    balanced: list[dict] = []
-    for cat in sorted(per_category.keys()):
-        balanced.extend(per_category[cat][:3])
-    candidates = balanced[:15]
-
-    degraded = False
     try:
-        ranked = llm.rank_and_reason(
-            params, candidates, top_n=settings.rag_max_recommendations
-        )
-    except Exception as exc:
-        logger.warning("LLM 排序失败，回退规则排序: %s", str(exc)[:200])
-        ranked = llm._mock_rank(params, candidates, top_n=settings.rag_max_recommendations)
-        degraded = True
+        local_candidates = _vector_search(params, settings.rag_top_k)
+        local_candidates = _structured_filter(local_candidates, params)
+        for c in local_candidates:
+            c["source"] = "local"
 
-    # 防幻觉：型号交叉验证 + 数据库字段优先
-    by_part = {c["part_number"].lower(): c for c in candidates}
-    results = []
-    for item in ranked:
-        part = (item.get("part_number") or "").strip()
-        db_row = by_part.get(part.lower())
-        if db_row is None:
-            logger.warning("LLM 推荐了知识库外型号，已丢弃: %s", part)
-            continue
-        results.append(
-            Component(
-                id=db_row["id"],
-                part_number=db_row["part_number"],
-                category=db_row["category"],
-                subcategory=db_row["subcategory"] or "",
-                manufacturer=db_row["manufacturer"] or "",
-                key_params=db_row.get("key_params") or {},
-                price_cny=db_row["price_cny"] or 0,
-                price_unit=db_row["price_unit"] or "个",
-                stock_status=db_row["stock_status"] or "",
-                datasheet_url=db_row["datasheet_url"] or "",
-                recommend_reason=item.get("recommend_reason", ""),
-                match_score=float(item.get("match_score", 0)),
+        lcsc_candidates = _search_lcsc(params, settings)
+
+        candidates = list(local_candidates) + list(lcsc_candidates)
+        if not candidates:
+            return [], False
+
+        # 品类均衡压缩候选，控制在 LLM 上下文内（每类立创 3 + 本地 3）
+        per_category: dict[str, list[dict]] = {}
+        for c in candidates:
+            per_category.setdefault(_infer_category(c), []).append(c)
+        balanced: list[dict] = []
+        for cat in sorted(per_category.keys()):
+            lcsc_in_cat = [c for c in per_category[cat] if c.get("source") == "lcsc"]
+            local_in_cat = [c for c in per_category[cat] if c.get("source") != "lcsc"]
+            balanced.extend(lcsc_in_cat[:3])
+            balanced.extend(local_in_cat[:3])
+        candidates = balanced[:18]
+
+        degraded = False
+        try:
+            ranked = llm.rank_and_reason(
+                params, candidates, top_n=settings.rag_max_recommendations
             )
-        )
-    return results, degraded
+        except Exception as exc:
+            logger.warning("LLM 排序失败，回退规则排序: %s", str(exc)[:200])
+            ranked = llm._mock_rank(
+                params, candidates, top_n=settings.rag_max_recommendations
+            )
+            degraded = True
+
+        return _assemble(ranked, candidates), degraded
+    except Exception as exc:
+        # 任何意外异常：回退到纯规则排序，保证"永远有结果"，绝不返回 500
+        logger.warning("推荐流程异常，回退规则排序: %s", str(exc)[:200])
+        try:
+            fallback = _keyword_search(params, settings.rag_max_recommendations * 3)
+            ranked = llm._mock_rank(
+                params, fallback, top_n=settings.rag_max_recommendations
+            )
+            return _assemble(ranked, fallback), True
+        except Exception:
+            return [], True

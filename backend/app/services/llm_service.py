@@ -22,37 +22,44 @@ from ..models.schemas import StructuredParams
 
 logger = logging.getLogger("hwcopilot")
 
-PARSE_PROMPT = """你是一个硬件选型助手。请从用户的自然语言描述中提取以下结构化参数：
+PARSE_PROMPT = """你是一个资深硬件选型工程师。请从用户的自然语言描述中提取结构化参数，并**自动补齐缺失字段**，给出一个能落地、符合工程常识的参数集。
 
 用户输入: "{user_text}"
 
-请提取以下字段（如果用户未提及，根据上下文推断或留空）：
-- application: 应用场景
-- power_supply: 供电方式 (电池/USB/适配器/太阳能)
-- power_consumption: 功耗要求
-- communication: 通信方式 (蓝牙/WiFi/LoRa/串口等)，数组
-- interface: 接口类型 (I2C/SPI/UART/GPIO等)，数组
-- voltage: 电压要求
-- budget: 预算
-- duration: 工作时长要求
-- extra_notes: 其他备注
+硬性要求：
+1. 提取用户明确提到的字段。
+2. 若用户描述信息太少、某字段未提及，请根据应用场景**主动推断合理的默认硬件参数（不要留空）**：
+   - application: 根据上下文归纳应用场景（如做了温湿度/心率/小车等）
+   - power_supply: 按场景选 电池供电 / USB 5V / 适配器 / 太阳能
+   - power_consumption: 按场景选 超低功耗 / 低功耗 / 常规
+   - communication: 按场景推断（无线传感器→蓝牙/BLE；远程→WiFi/LoRa；板间→I2C/SPI/UART），数组
+   - interface: 按常见芯片接口推断（传感器→I2C/SPI；输出控制→GPIO/PWM；量测→ADC），数组
+   - voltage: 按场景选 3.3V / 5V / 12V（如电池通常 3.7V 系统取 3.3V）
+   - duration: 按应用推断（如电池供电常配 6 个月以上）
+   - budget: 若用户未给预算，可给出该场景常见区间，没有把握则留空
+   - extra_notes: 保留用户补充或你推断的关键备注
+3. 输入越简单，推断越要主动，但推断必须符合工程常识、不能离谱。
 
-只输出 JSON，不要输出其他内容。JSON 格式:
+只输出 JSON，不要输出任何其他文字。JSON 格式:
 {{"application": "...", "power_supply": "...", "power_consumption": "...",
   "communication": [...], "interface": [...], "voltage": "...",
   "budget": "...", "duration": "...", "extra_notes": "..."}}
 
 {example}
 """
-
 SYSTEM_PROMPT = (
     "你是一个专业的硬件选型助手。请始终使用简体中文回答。"
     "严格遵守输出格式要求：只输出 JSON，不要输出任何多余文字，"
     "不要使用 Markdown 代码块包裹。"
 )
 
-PARSE_EXAMPLE = """示例输入: "我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上"
-示例输出: {"application": "温湿度监测", "power_supply": "电池供电", "power_consumption": "低功耗", "communication": ["蓝牙"], "interface": ["I2C"], "voltage": "", "budget": "", "duration": "6个月以上", "extra_notes": ""}
+PARSE_EXAMPLE = """示例 1（信息充足）:
+输入: "我要做一个低功耗蓝牙温湿度传感器，用电池供电，需要工作半年以上"
+输出: {"application": "温湿度监测", "power_supply": "电池供电", "power_consumption": "低功耗", "communication": ["蓝牙"], "interface": ["I2C"], "voltage": "3.3V", "budget": "", "duration": "6个月以上", "extra_notes": "低功耗蓝牙温湿度传感器"}
+
+示例 2（信息很少，需主动推断）:
+输入: "做个能测温湿度的东西"
+输出: {"application": "温湿度监测", "power_supply": "电池供电", "power_consumption": "低功耗", "communication": ["蓝牙"], "interface": ["I2C"], "voltage": "3.3V", "budget": "", "duration": "6个月以上", "extra_notes": "用户描述简单，已按温湿度传感器场景推断供电、通信、接口、电压等参数"}
 
 注意: communication 和 interface 必须是 JSON 数组，即使只有一个元素。
 """
@@ -276,7 +283,7 @@ class LLMService:
         attempts = 3 if cfg["provider"] == "local" else 1
         resp = None
         for attempt in range(attempts):
-            resp = httpx.post(base, headers=headers, json=payload, timeout=180)
+            resp = httpx.post(base, headers=headers, json=payload, timeout=60)
             if resp.status_code != 502 or attempt == attempts - 1:
                 break
             time.sleep(3)

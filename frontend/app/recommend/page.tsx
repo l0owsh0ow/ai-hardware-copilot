@@ -215,8 +215,16 @@ export default function RecommendPage() {
           <p className="mb-6 ml-10 text-sm text-ink-500">请确认以下参数是否准确，可点击数值修改</p>
 
           {error && (
-            <div className="mb-4 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
-              {error}
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+              <span className="min-w-0 break-words">{error}</span>
+              <button
+                type="button"
+                onClick={handleRecommend}
+                disabled={loading}
+                className="btn-secondary shrink-0 !py-1.5 text-xs"
+              >
+                重试
+              </button>
             </div>
           )}
 

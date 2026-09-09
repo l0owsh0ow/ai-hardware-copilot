@@ -1,5 +1,6 @@
 """LLM 设置接口：查看/保存/测试连接。"""
 
+import asyncio
 from datetime import datetime
 
 from fastapi import APIRouter
@@ -63,5 +64,6 @@ async def test_llm_settings(req: LLMSettingsUpdate | None = None):
             cfg["base_url"] = req.base_url
         if req.api_key:
             cfg["api_key"] = req.api_key
-    result = LLMService().test_connection(cfg)
+    # 测试连接（本地/云端）可能耗时，放入线程池避免阻塞事件循环
+    result = await asyncio.to_thread(LLMService().test_connection, cfg)
     return LLMTestResponse(**result)

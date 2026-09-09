@@ -22,16 +22,28 @@ function authHeaders(extra: Record<string, string> = {}): Record<string, string>
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
-  const resp = await fetch(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify(body),
-  });
-  if (!resp.ok) {
-    const detail = await resp.text().catch(() => "");
-    throw new Error(`请求失败 (${resp.status}): ${detail.slice(0, 200)}`);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 90000);
+  try {
+    const resp = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    if (!resp.ok) {
+      const detail = await resp.text().catch(() => "");
+      throw new Error(`请求失败 (${resp.status}): ${detail.slice(0, 200)}`);
+    }
+    return resp.json() as Promise<T>;
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "AbortError") {
+      throw new Error("请求超时，请点击重试或稍后再试");
+    }
+    throw e;
+  } finally {
+    clearTimeout(timer);
   }
-  return resp.json() as Promise<T>;
 }
 
 export async function parseRequirement(text: string) {
